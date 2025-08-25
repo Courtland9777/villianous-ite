@@ -18,7 +18,7 @@
   - [x] Observability
 - [ ] Frontend
   - [x] Install dependencies
-  - [ ] Set up routing, state management, and data fetching
+  - [x] Set up routing, state management, and data fetching
   - [ ] Build UI
   - [ ] Error handling
 - [ ] Tests & CI
