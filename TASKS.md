@@ -30,3 +30,5 @@
   - [x] Configure MSW for frontend tests
   - [x] Prompt modal unit test
 - [x] Docs & acceptance
+- [x] CI/CD
+  - [x] GitHub Actions workflow
