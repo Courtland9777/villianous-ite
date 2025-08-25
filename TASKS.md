@@ -21,7 +21,7 @@
   - [x] Set up routing, state management, and data fetching
   - [ ] Build UI
     - [x] Villain realms
-    - [ ] Action spots
+    - [x] Action spots
     - [x] Hand view
     - [ ] Prompt modals
   - [ ] Error handling
