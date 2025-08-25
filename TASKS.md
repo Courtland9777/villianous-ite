@@ -8,7 +8,7 @@
   - [x] Vanquish
   - [x] Fate pipeline
   - [x] Objective checks
-- [ ] API
+- [x] API
   - [x] POST `/api/matches` — create match
   - [x] GET `/api/matches/{id}/state`
   - [x] GET `/api/matches/{id}/replay`
@@ -17,5 +17,9 @@
   - [x] Error handling
   - [x] Observability
 - [ ] Frontend
+  - [x] Install dependencies
+  - [ ] Set up routing, state management, and data fetching
+  - [ ] Build UI
+  - [ ] Error handling
 - [ ] Tests & CI
 - [ ] Docs & acceptance
