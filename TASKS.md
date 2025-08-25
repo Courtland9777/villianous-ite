@@ -19,7 +19,7 @@
 - [ ] Frontend
   - [x] Install dependencies
   - [x] Set up routing, state management, and data fetching
-  - [ ] Build UI
+  - [x] Build UI
     - [x] Villain realms
     - [x] Action spots
   - [x] Hand view
