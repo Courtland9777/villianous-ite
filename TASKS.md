@@ -7,7 +7,7 @@
 - [ ] Core actions
   - [x] Vanquish
   - [x] Fate pipeline
-  - [ ] Objective checks
+  - [x] Objective checks
 - [ ] API
 - [ ] Frontend
 - [ ] Tests & CI

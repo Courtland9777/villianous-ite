@@ -16,4 +16,16 @@ public class FateCommandTests
 
         Assert.Contains(new FateCardRevealed(player2.Id, "Hero"), events);
     }
+
+    [Fact]
+    public void Does_Not_Emit_When_Targeting_Self()
+    {
+        var player = new PlayerState(Guid.NewGuid(), "Villain", 0, Array.Empty<LocationState>());
+        var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0);
+
+        var command = new FateCommand(player.Id, player.Id, "Hero");
+        var events = command.Execute(state);
+
+        Assert.Empty(events);
+    }
 }
