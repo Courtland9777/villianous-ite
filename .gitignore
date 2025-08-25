@@ -206,6 +206,11 @@ PublishScripts/
 **/[Pp]ackages/*
 # except build/, which is used as an MSBuild target.
 !**/[Pp]ackages/build/
+# Allow top-level packages directory for source projects
+!packages/
+!packages/**
+packages/**/[Bb]in/
+packages/**/[Oo]bj/
 # Uncomment if necessary however generally it will be regenerated when needed
 #!**/[Pp]ackages/repositories.config
 # NuGet v3's project.json files produces more ignorable files
