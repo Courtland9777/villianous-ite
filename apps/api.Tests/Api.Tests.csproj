@@ -26,6 +26,7 @@
   <ItemGroup>
     <ProjectReference Include="../api/Api.csproj" />
     <ProjectReference Include="../../packages/model/Model.csproj" />
+    <ProjectReference Include="../../packages/engine/Engine.csproj" />
   </ItemGroup>
 
 </Project>

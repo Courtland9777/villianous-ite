@@ -10,7 +10,7 @@
   - [x] Objective checks
 - [ ] API
   - [x] POST `/api/matches` — create match
-  - [ ] GET `/api/matches/{id}/state`
+  - [x] GET `/api/matches/{id}/state`
   - [ ] GET `/api/matches/{id}/replay`
   - [ ] POST `/api/matches/{id}/commands`
   - [ ] SignalR hub
