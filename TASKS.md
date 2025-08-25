@@ -6,7 +6,7 @@
   - [x] ICommand interface & Domain events
 - [ ] Core actions
   - [x] Vanquish
-  - [ ] Fate pipeline
+  - [x] Fate pipeline
   - [ ] Objective checks
 - [ ] API
 - [ ] Frontend
