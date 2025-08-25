@@ -28,4 +28,4 @@
 - [x] Tests & CI
   - [x] Configure MSW for frontend tests
   - [x] Prompt modal unit test
-- [ ] Docs & acceptance
+- [x] Docs & acceptance
