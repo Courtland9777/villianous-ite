@@ -30,7 +30,7 @@ This is the **primary guide** for Codex agents and human developers to stand up 
    git init
    dotnet new gitignore
    ```
-- [ ] Add `.gitignore`, `README.md`, and `LICENSE` (MIT recommended)  
+- [ ] Add `.gitignore`, `README.md`, and `LICENSE` (PolyForm Noncommercial 1.0.0)  
 - [ ] Create solution:  
    ```bash
    dotnet new sln -n Villainous

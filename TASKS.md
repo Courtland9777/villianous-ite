@@ -1,6 +1,7 @@
 # TASKS
 
 - [x] Repo scaffold
+  - [x] PolyForm Noncommercial license file
 - [x] Engine foundation
   - [x] GameState & PlayerState records
   - [x] ICommand interface & Domain events
@@ -28,4 +29,6 @@
 - [x] Tests & CI
   - [x] Configure MSW for frontend tests
   - [x] Prompt modal unit test
-- [ ] Docs & acceptance
+- [x] Docs & acceptance
+- [x] CI/CD
+  - [x] GitHub Actions workflow
