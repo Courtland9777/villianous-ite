@@ -7,6 +7,16 @@ This document defines the API surface for the Villainous web app. The API follow
 
 ## REST Endpoints
 
+### GET /healthz/live
+**Description**: Liveness probe.
+
+Response `200 OK` with empty body.
+
+### GET /ready
+**Description**: Readiness probe.
+
+Response `200 OK` with empty body.
+
 ### POST /api/matches
 **Description**: Create a new match.
 

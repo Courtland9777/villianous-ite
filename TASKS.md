@@ -15,7 +15,7 @@
   - [x] POST `/api/matches/{id}/commands`
   - [x] SignalR hub
   - [x] Error handling
-  - [ ] Observability
+  - [x] Observability
 - [ ] Frontend
 - [ ] Tests & CI
 - [ ] Docs & acceptance

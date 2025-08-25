@@ -3,18 +3,44 @@ using System.Collections.Concurrent;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using OpenTelemetry.Metrics;
+using OpenTelemetry.Trace;
+using Serilog;
 using Villainous.Engine;
 using Villainous.Model;
 using Villainous.Api;
 
 var builder = WebApplication.CreateBuilder(args);
+builder.Host.UseSerilog((ctx, services, cfg) => cfg
+    .ReadFrom.Configuration(ctx.Configuration)
+    .ReadFrom.Services(services)
+    .Enrich.FromLogContext());
+
+builder.Services.AddHealthChecks();
+
+builder.Services.AddOpenTelemetry()
+    .WithTracing(b => b
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddOtlpExporter())
+    .WithMetrics(b => b
+        .AddAspNetCoreInstrumentation()
+        .AddHttpClientInstrumentation()
+        .AddRuntimeInstrumentation()
+        .AddOtlpExporter());
+
 builder.Services.AddSingleton<ConcurrentDictionary<Guid, GameState>>();
 builder.Services.AddSingleton<ConcurrentDictionary<Guid, List<DomainEvent>>>();
 builder.Services.AddSignalR();
+
 var app = builder.Build();
+app.UseSerilogRequestLogging();
 
 var matches = app.Services.GetRequiredService<ConcurrentDictionary<Guid, GameState>>();
 var replays = app.Services.GetRequiredService<ConcurrentDictionary<Guid, List<DomainEvent>>>();
+
+app.MapHealthChecks("/healthz/live");
+app.MapHealthChecks("/ready");
 
 app.MapPost("/api/matches", (CreateMatchRequest request) =>
 {
