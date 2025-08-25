@@ -16,10 +16,16 @@
   - [x] SignalR hub
   - [x] Error handling
   - [x] Observability
-- [ ] Frontend
+- [x] Frontend
   - [x] Install dependencies
-  - [ ] Set up routing, state management, and data fetching
-  - [ ] Build UI
-  - [ ] Error handling
-- [ ] Tests & CI
+  - [x] Set up routing, state management, and data fetching
+  - [x] Build UI
+    - [x] Villain realms
+    - [x] Action spots
+  - [x] Hand view
+  - [x] Prompt modals
+  - [x] Error handling
+- [x] Tests & CI
+  - [x] Configure MSW for frontend tests
+  - [x] Prompt modal unit test
 - [ ] Docs & acceptance
