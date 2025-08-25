@@ -19,4 +19,4 @@ This repository hosts a deterministic Disney Villainous engine, ASP.NET Core API
 - Backend coverage ≥85%, frontend ≥80%
 
 ---
-Released under the MIT license.
+This project is licensed under the PolyForm Noncommercial License 1.0.0. See LICENSE for details.

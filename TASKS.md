@@ -1,7 +1,7 @@
 # TASKS
 
 - [x] Repo scaffold
-  - [x] MIT LICENSE file
+  - [x] PolyForm Noncommercial license file
 - [x] Engine foundation
   - [x] GameState & PlayerState records
   - [x] ICommand interface & Domain events
