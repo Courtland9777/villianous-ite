@@ -11,7 +11,7 @@
 - [ ] API
   - [x] POST `/api/matches` — create match
   - [x] GET `/api/matches/{id}/state`
-  - [ ] GET `/api/matches/{id}/replay`
+  - [x] GET `/api/matches/{id}/replay`
   - [ ] POST `/api/matches/{id}/commands`
   - [ ] SignalR hub
   - [ ] Error handling

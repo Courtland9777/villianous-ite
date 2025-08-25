@@ -57,15 +57,11 @@ Response:
 ### GET /api/matches/{id}/replay
 **Description**: Retrieve the full replay log (for authorized participants).
 
-Response:
+Response: array of domain events.
 ```json
-{
-  "seed": 12345,
-  "events": [
-    { "seq": 1, "type": "CardPlayed", "payload": { "cardId": "ally1" } },
-    { "seq": 2, "type": "HeroPlayed", "payload": { "heroId": "ariel" } }
-  ]
-}
+[
+  { "playerId": "guid", "location": "forest", "hero": "robin" }
+]
 ```
 
 ---

@@ -7,6 +7,7 @@ using Villainous.Model;
 
 var builder = WebApplication.CreateBuilder(args);
 var matches = new ConcurrentDictionary<Guid, GameState>();
+var replays = new ConcurrentDictionary<Guid, List<DomainEvent>>();
 var app = builder.Build();
 
 app.MapPost("/api/matches", (CreateMatchRequest request) =>
@@ -17,12 +18,18 @@ app.MapPost("/api/matches", (CreateMatchRequest request) =>
         .ToList();
     var state = new GameState(matchId, players, 0, 0);
     matches[matchId] = state;
+    replays[matchId] = new List<DomainEvent>();
     return Results.Json(new CreateMatchResponse(matchId), statusCode: StatusCodes.Status201Created);
 });
 
 app.MapGet("/api/matches/{id:guid}/state", (Guid id) =>
     matches.TryGetValue(id, out var state)
         ? Results.Json(state)
+        : Results.NotFound());
+
+app.MapGet("/api/matches/{id:guid}/replay", (Guid id) =>
+    replays.TryGetValue(id, out var events)
+        ? Results.Json(events)
         : Results.NotFound());
 
 app.Run();
