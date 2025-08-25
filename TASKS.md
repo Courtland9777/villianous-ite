@@ -4,11 +4,18 @@
 - [x] Engine foundation
   - [x] GameState & PlayerState records
   - [x] ICommand interface & Domain events
-- [ ] Core actions
+- [x] Core actions
   - [x] Vanquish
-  - [ ] Fate pipeline
-  - [ ] Objective checks
+  - [x] Fate pipeline
+  - [x] Objective checks
 - [ ] API
+  - [x] POST `/api/matches` — create match
+  - [x] GET `/api/matches/{id}/state`
+  - [ ] GET `/api/matches/{id}/replay`
+  - [ ] POST `/api/matches/{id}/commands`
+  - [ ] SignalR hub
+  - [ ] Error handling
+  - [ ] Observability
 - [ ] Frontend
 - [ ] Tests & CI
 - [ ] Docs & acceptance
