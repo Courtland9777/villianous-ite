@@ -1,4 +1,5 @@
 using System;
+using System.Net;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
@@ -8,35 +9,35 @@ using Xunit;
 
 namespace Villainous.Api.Tests;
 
-public class GetMatchStateTests : IClassFixture<WebApplicationFactory<Program>>
+public class GetMatchReplayTests : IClassFixture<WebApplicationFactory<Program>>
 {
     private readonly HttpClient client;
 
-    public GetMatchStateTests(WebApplicationFactory<Program> factory)
+    public GetMatchReplayTests(WebApplicationFactory<Program> factory)
     {
         client = factory.CreateClient();
     }
 
     [Fact]
-    public async Task ReturnsState()
+    public async Task ReturnsEmptyReplay()
     {
         var request = new CreateMatchRequest(["Prince John", "Captain Hook"]);
         var create = await client.PostAsJsonAsync("/api/matches", request);
         var match = await create.Content.ReadFromJsonAsync<CreateMatchResponse>();
 
-        var state = await client.GetFromJsonAsync<GameState>($"/api/matches/{match!.MatchId}/state");
+        var replay = await client.GetFromJsonAsync<DomainEvent[]>(
+            $"/api/matches/{match!.MatchId}/replay");
 
-        Assert.NotNull(state);
-        Assert.Equal(match!.MatchId, state!.MatchId);
-        Assert.Equal(2, state.Players.Count);
+        Assert.NotNull(replay);
+        Assert.Empty(replay!);
     }
 
     [Fact]
     public async Task Returns404ForUnknownId()
     {
-        var response = await client.GetAsync($"/api/matches/{Guid.NewGuid()}/state");
+        var response = await client.GetAsync($"/api/matches/{Guid.NewGuid()}/replay");
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
-        Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         Assert.Equal("Match not found", problem!.Title);
     }
 }

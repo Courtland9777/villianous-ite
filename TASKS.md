@@ -8,14 +8,18 @@
   - [x] Vanquish
   - [x] Fate pipeline
   - [x] Objective checks
-- [ ] API
+- [x] API
   - [x] POST `/api/matches` — create match
   - [x] GET `/api/matches/{id}/state`
-  - [ ] GET `/api/matches/{id}/replay`
-  - [ ] POST `/api/matches/{id}/commands`
-  - [ ] SignalR hub
-  - [ ] Error handling
-  - [ ] Observability
+  - [x] GET `/api/matches/{id}/replay`
+  - [x] POST `/api/matches/{id}/commands`
+  - [x] SignalR hub
+  - [x] Error handling
+  - [x] Observability
 - [ ] Frontend
+  - [x] Install dependencies
+  - [ ] Set up routing, state management, and data fetching
+  - [ ] Build UI
+  - [ ] Error handling
 - [ ] Tests & CI
 - [ ] Docs & acceptance

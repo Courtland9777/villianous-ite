@@ -7,6 +7,16 @@ This document defines the API surface for the Villainous web app. The API follow
 
 ## REST Endpoints
 
+### GET /healthz/live
+**Description**: Liveness probe.
+
+Response `200 OK` with empty body.
+
+### GET /ready
+**Description**: Readiness probe.
+
+Response `200 OK` with empty body.
+
 ### POST /api/matches
 **Description**: Create a new match.
 
@@ -52,20 +62,26 @@ Response:
 }
 ```
 
+Error `404 Not Found`:
+```json
+{ "title": "Match not found", "status": 404, "type": "match.not_found" }
+```
+
 ---
 
 ### GET /api/matches/{id}/replay
 **Description**: Retrieve the full replay log (for authorized participants).
 
-Response:
+Response: array of domain events.
 ```json
-{
-  "seed": 12345,
-  "events": [
-    { "seq": 1, "type": "CardPlayed", "payload": { "cardId": "ally1" } },
-    { "seq": 2, "type": "HeroPlayed", "payload": { "heroId": "ariel" } }
-  ]
-}
+[
+  { "playerId": "guid", "location": "forest", "hero": "robin" }
+]
+```
+
+Error `404 Not Found`:
+```json
+{ "title": "Match not found", "status": 404, "type": "match.not_found" }
 ```
 
 ---
@@ -76,10 +92,10 @@ Response:
 Request:
 ```json
 {
-  "type": "PlayCard",
-  "payload": { "cardId": "ally1", "location": "ursula-lair" },
-  "clientSeq": 5,
-  "corrId": "abc123"
+  "type": "Fate",
+  "playerId": "11111111-1111-1111-1111-111111111111",
+  "targetPlayerId": "22222222-2222-2222-2222-222222222222",
+  "card": "ariel"
 }
 ```
 
@@ -88,43 +104,29 @@ Response `200 OK`:
 { "accepted": true }
 ```
 
-Error Response (ProblemDetails):
+Error `400 Bad Request` for unknown command types:
 ```json
-{
-  "type": "https://game.example.com/errors/rules.invalid_target",
-  "title": "Invalid Target",
-  "status": 400,
-  "detail": "Ally cannot be played at this location.",
-  "instance": "/matches/f3b6f28a/commands/5",
-  "code": "rules.invalid_target",
-  "traceId": "00-8af7651916cd43dd8448eb211c80319c-01"
-}
+{ "title": "Unknown command type", "status": 400, "type": "rules.illegal_action" }
 ```
 
 ---
 
-## SignalR Hub: `/hub`
+## SignalR Hub: `/hub/match`
 
 ### Methods
-- `JoinMatch(matchId)`  
-  - Adds connection to group, sends **MatchJoined** with snapshot.  
-- `SendCommand(matchId, CommandDto)`  
-  - Validates, applies to state, broadcasts **StateUpdated**.  
-- `LeaveMatch(matchId)`  
-  - Removes from group.
+- `JoinMatch(matchId)`
+  - Adds connection to match group and sends current state.
+- `SendCommand(matchId, CommandDto)`
+  - Applies command and broadcasts updated state to group.
 
 ### Events
-- **MatchJoined**  
+- **State**
   ```json
-  { "matchId": "f3b6f28a", "state": { /* snapshot */ } }
+  { "matchId": "f3b6f28a", "players": [], "currentPlayerIndex": 0, "turn": 0 }
   ```
-- **StateUpdated**  
+- **CommandRejected**
   ```json
-  { "matchId": "f3b6f28a", "events": [ { "seq": 6, "type": "HeroDefeated", "payload": { "heroId": "ariel" } } ] }
-  ```
-- **CommandRejected**  
-  ```json
-  { "code": "rules.illegal_action", "message": "You cannot Fate yourself.", "traceId": "..." }
+  { "title": "Unknown command type", "status": 400, "type": "rules.illegal_action" }
   ```
 
 ---
