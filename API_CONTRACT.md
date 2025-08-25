@@ -88,28 +88,18 @@ Error Response `400 Bad Request` for unknown command types.
 
 ---
 
-## SignalR Hub: `/hub`
+## SignalR Hub: `/hub/match`
 
 ### Methods
-- `JoinMatch(matchId)`  
-  - Adds connection to group, sends **MatchJoined** with snapshot.  
-- `SendCommand(matchId, CommandDto)`  
-  - Validates, applies to state, broadcasts **StateUpdated**.  
-- `LeaveMatch(matchId)`  
-  - Removes from group.
+- `JoinMatch(matchId)`
+  - Adds connection to match group and sends current state.
+- `SendCommand(matchId, CommandDto)`
+  - Applies command and broadcasts updated state to group.
 
 ### Events
-- **MatchJoined**  
+- **State**
   ```json
-  { "matchId": "f3b6f28a", "state": { /* snapshot */ } }
-  ```
-- **StateUpdated**  
-  ```json
-  { "matchId": "f3b6f28a", "events": [ { "seq": 6, "type": "HeroDefeated", "payload": { "heroId": "ariel" } } ] }
-  ```
-- **CommandRejected**  
-  ```json
-  { "code": "rules.illegal_action", "message": "You cannot Fate yourself.", "traceId": "..." }
+  { "matchId": "f3b6f28a", "players": [], "currentPlayerIndex": 0, "turn": 0 }
   ```
 
 ---

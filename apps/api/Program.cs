@@ -4,11 +4,16 @@ using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Villainous.Engine;
 using Villainous.Model;
+using Villainous.Api;
 
 var builder = WebApplication.CreateBuilder(args);
-var matches = new ConcurrentDictionary<Guid, GameState>();
-var replays = new ConcurrentDictionary<Guid, List<DomainEvent>>();
+builder.Services.AddSingleton<ConcurrentDictionary<Guid, GameState>>();
+builder.Services.AddSingleton<ConcurrentDictionary<Guid, List<DomainEvent>>>();
+builder.Services.AddSignalR();
 var app = builder.Build();
+
+var matches = app.Services.GetRequiredService<ConcurrentDictionary<Guid, GameState>>();
+var replays = app.Services.GetRequiredService<ConcurrentDictionary<Guid, List<DomainEvent>>>();
 
 app.MapPost("/api/matches", (CreateMatchRequest request) =>
 {
@@ -59,6 +64,8 @@ app.MapPost("/api/matches/{id:guid}/commands", (Guid id, SubmitCommandRequest re
     replays[id].AddRange(events);
     return Results.Json(new SubmitCommandResponse(true));
 });
+
+app.MapHub<MatchHub>("/hub/match");
 
 app.Run();
 

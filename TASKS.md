@@ -13,7 +13,7 @@
   - [x] GET `/api/matches/{id}/state`
   - [x] GET `/api/matches/{id}/replay`
   - [x] POST `/api/matches/{id}/commands`
-  - [ ] SignalR hub
+  - [x] SignalR hub
   - [ ] Error handling
   - [ ] Observability
 - [ ] Frontend
