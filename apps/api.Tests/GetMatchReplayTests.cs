@@ -1,6 +1,7 @@
 using System;
 using System.Net;
 using System.Net.Http.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Villainous.Engine;
 using Villainous.Model;
@@ -35,6 +36,8 @@ public class GetMatchReplayTests : IClassFixture<WebApplicationFactory<Program>>
     public async Task Returns404ForUnknownId()
     {
         var response = await client.GetAsync($"/api/matches/{Guid.NewGuid()}/replay");
+        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("Match not found", problem!.Title);
     }
 }

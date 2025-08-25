@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Villainous.Engine;
 using Villainous.Model;
 using Villainous.Api;
@@ -30,18 +31,18 @@ app.MapPost("/api/matches", (CreateMatchRequest request) =>
 app.MapGet("/api/matches/{id:guid}/state", (Guid id) =>
     matches.TryGetValue(id, out var state)
         ? Results.Json(state)
-        : Results.NotFound());
+        : Results.Problem(title: "Match not found", statusCode: StatusCodes.Status404NotFound, type: "match.not_found"));
 
 app.MapGet("/api/matches/{id:guid}/replay", (Guid id) =>
     replays.TryGetValue(id, out var events)
         ? Results.Json(events)
-        : Results.NotFound());
+        : Results.Problem(title: "Match not found", statusCode: StatusCodes.Status404NotFound, type: "match.not_found"));
 
 app.MapPost("/api/matches/{id:guid}/commands", (Guid id, SubmitCommandRequest request) =>
 {
     if (!matches.TryGetValue(id, out var state))
     {
-        return Results.NotFound();
+        return Results.Problem(title: "Match not found", statusCode: StatusCodes.Status404NotFound, type: "match.not_found");
     }
 
     ICommand? command = request.Type switch
@@ -56,7 +57,7 @@ app.MapPost("/api/matches/{id:guid}/commands", (Guid id, SubmitCommandRequest re
 
     if (command is null)
     {
-        return Results.BadRequest();
+        return Results.Problem(title: "Unknown command type", statusCode: StatusCodes.Status400BadRequest, type: "rules.illegal_action");
     }
 
     var (newState, events) = GameReducer.Reduce(state, command);

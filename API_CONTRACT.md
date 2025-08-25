@@ -52,6 +52,11 @@ Response:
 }
 ```
 
+Error `404 Not Found`:
+```json
+{ "title": "Match not found", "status": 404, "type": "match.not_found" }
+```
+
 ---
 
 ### GET /api/matches/{id}/replay
@@ -62,6 +67,11 @@ Response: array of domain events.
 [
   { "playerId": "guid", "location": "forest", "hero": "robin" }
 ]
+```
+
+Error `404 Not Found`:
+```json
+{ "title": "Match not found", "status": 404, "type": "match.not_found" }
 ```
 
 ---
@@ -84,7 +94,10 @@ Response `200 OK`:
 { "accepted": true }
 ```
 
-Error Response `400 Bad Request` for unknown command types.
+Error `400 Bad Request` for unknown command types:
+```json
+{ "title": "Unknown command type", "status": 400, "type": "rules.illegal_action" }
+```
 
 ---
 
@@ -100,6 +113,10 @@ Error Response `400 Bad Request` for unknown command types.
 - **State**
   ```json
   { "matchId": "f3b6f28a", "players": [], "currentPlayerIndex": 0, "turn": 0 }
+  ```
+- **CommandRejected**
+  ```json
+  { "title": "Unknown command type", "status": 400, "type": "rules.illegal_action" }
   ```
 
 ---

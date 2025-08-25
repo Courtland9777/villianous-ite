@@ -2,6 +2,7 @@ using System;
 using System.Net;
 using System.Net.Http.Json;
 using System.Text.Json;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Villainous.Engine;
 using Villainous.Model;
@@ -40,7 +41,9 @@ public class PostMatchCommandsTests : IClassFixture<WebApplicationFactory<Progra
     {
         var command = new SubmitCommandRequest("CheckObjective", Guid.NewGuid(), null, null, null, null);
         var response = await client.PostAsJsonAsync($"/api/matches/{Guid.NewGuid()}/commands", command);
+        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
+        Assert.Equal("Match not found", problem!.Title);
     }
 
     [Fact]
@@ -50,6 +53,8 @@ public class PostMatchCommandsTests : IClassFixture<WebApplicationFactory<Progra
         var match = await create.Content.ReadFromJsonAsync<CreateMatchResponse>();
         var command = new SubmitCommandRequest("Unknown", Guid.NewGuid(), null, null, null, null);
         var response = await client.PostAsJsonAsync($"/api/matches/{match!.MatchId}/commands", command);
+        var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
+        Assert.Equal("Unknown command type", problem!.Title);
     }
 }

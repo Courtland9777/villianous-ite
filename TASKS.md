@@ -14,7 +14,7 @@
   - [x] GET `/api/matches/{id}/replay`
   - [x] POST `/api/matches/{id}/commands`
   - [x] SignalR hub
-  - [ ] Error handling
+  - [x] Error handling
   - [ ] Observability
 - [ ] Frontend
 - [ ] Tests & CI

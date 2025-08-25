@@ -1,4 +1,6 @@
 using System.Collections.Concurrent;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
 using Villainous.Engine;
 using Villainous.Model;
@@ -22,7 +24,13 @@ public class MatchHub : Hub
     {
         if (!matches.TryGetValue(matchId, out var state))
         {
-            throw new HubException("Match not found");
+            await Clients.Caller.SendAsync("CommandRejected", new ProblemDetails
+            {
+                Title = "Match not found",
+                Status = StatusCodes.Status404NotFound,
+                Type = "match.not_found"
+            });
+            return;
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, matchId.ToString());
@@ -33,7 +41,13 @@ public class MatchHub : Hub
     {
         if (!matches.TryGetValue(matchId, out var state))
         {
-            throw new HubException("Match not found");
+            await Clients.Caller.SendAsync("CommandRejected", new ProblemDetails
+            {
+                Title = "Match not found",
+                Status = StatusCodes.Status404NotFound,
+                Type = "match.not_found"
+            });
+            return;
         }
 
         ICommand? command = request.Type switch
@@ -48,7 +62,13 @@ public class MatchHub : Hub
 
         if (command is null)
         {
-            throw new HubException("Unknown command");
+            await Clients.Caller.SendAsync("CommandRejected", new ProblemDetails
+            {
+                Title = "Unknown command type",
+                Status = StatusCodes.Status400BadRequest,
+                Type = "rules.illegal_action"
+            });
+            return;
         }
 
         var (newState, events) = GameReducer.Reduce(state, command);
