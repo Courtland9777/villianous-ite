@@ -32,6 +32,34 @@ app.MapGet("/api/matches/{id:guid}/replay", (Guid id) =>
         ? Results.Json(events)
         : Results.NotFound());
 
+app.MapPost("/api/matches/{id:guid}/commands", (Guid id, SubmitCommandRequest request) =>
+{
+    if (!matches.TryGetValue(id, out var state))
+    {
+        return Results.NotFound();
+    }
+
+    ICommand? command = request.Type switch
+    {
+        "Vanquish" when request.Location is { } location && request.Hero is { } hero
+            => new VanquishCommand(request.PlayerId, location, hero),
+        "Fate" when request.TargetPlayerId is { } target && request.Card is { } card
+            => new FateCommand(request.PlayerId, target, card),
+        "CheckObjective" => new CheckObjectiveCommand(request.PlayerId),
+        _ => null
+    };
+
+    if (command is null)
+    {
+        return Results.BadRequest();
+    }
+
+    var (newState, events) = GameReducer.Reduce(state, command);
+    matches[id] = newState;
+    replays[id].AddRange(events);
+    return Results.Json(new SubmitCommandResponse(true));
+});
+
 app.Run();
 
 public partial class Program;

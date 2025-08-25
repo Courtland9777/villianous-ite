@@ -72,10 +72,10 @@ Response: array of domain events.
 Request:
 ```json
 {
-  "type": "PlayCard",
-  "payload": { "cardId": "ally1", "location": "ursula-lair" },
-  "clientSeq": 5,
-  "corrId": "abc123"
+  "type": "Fate",
+  "playerId": "11111111-1111-1111-1111-111111111111",
+  "targetPlayerId": "22222222-2222-2222-2222-222222222222",
+  "card": "ariel"
 }
 ```
 
@@ -84,18 +84,7 @@ Response `200 OK`:
 { "accepted": true }
 ```
 
-Error Response (ProblemDetails):
-```json
-{
-  "type": "https://game.example.com/errors/rules.invalid_target",
-  "title": "Invalid Target",
-  "status": 400,
-  "detail": "Ally cannot be played at this location.",
-  "instance": "/matches/f3b6f28a/commands/5",
-  "code": "rules.invalid_target",
-  "traceId": "00-8af7651916cd43dd8448eb211c80319c-01"
-}
-```
+Error Response `400 Bad Request` for unknown command types.
 
 ---
 

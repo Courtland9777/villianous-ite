@@ -12,7 +12,7 @@
   - [x] POST `/api/matches` — create match
   - [x] GET `/api/matches/{id}/state`
   - [x] GET `/api/matches/{id}/replay`
-  - [ ] POST `/api/matches/{id}/commands`
+  - [x] POST `/api/matches/{id}/commands`
   - [ ] SignalR hub
   - [ ] Error handling
   - [ ] Observability
