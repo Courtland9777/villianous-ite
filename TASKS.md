@@ -20,7 +20,7 @@
   - [x] Install dependencies
   - [x] Set up routing, state management, and data fetching
   - [ ] Build UI
-    - [ ] Villain realms
+    - [x] Villain realms
     - [ ] Action spots
     - [x] Hand view
     - [ ] Prompt modals
