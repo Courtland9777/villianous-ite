@@ -25,6 +25,7 @@
   - [x] Hand view
   - [x] Prompt modals
   - [x] Error handling
-- [ ] Tests & CI
+- [x] Tests & CI
   - [x] Configure MSW for frontend tests
+  - [x] Prompt modal unit test
 - [ ] Docs & acceptance
