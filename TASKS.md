@@ -16,7 +16,7 @@
   - [x] SignalR hub
   - [x] Error handling
   - [x] Observability
-- [ ] Frontend
+- [x] Frontend
   - [x] Install dependencies
   - [x] Set up routing, state management, and data fetching
   - [x] Build UI
@@ -26,4 +26,5 @@
   - [x] Prompt modals
   - [x] Error handling
 - [ ] Tests & CI
+  - [x] Configure MSW for frontend tests
 - [ ] Docs & acceptance
