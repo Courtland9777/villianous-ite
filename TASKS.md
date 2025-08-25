@@ -23,7 +23,7 @@
     - [x] Villain realms
     - [x] Action spots
     - [x] Hand view
-    - [ ] Prompt modals
+    - [x] Prompt modals
   - [ ] Error handling
 - [ ] Tests & CI
 - [ ] Docs & acceptance

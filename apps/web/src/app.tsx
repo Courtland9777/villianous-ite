@@ -1,8 +1,17 @@
 import './app.css';
+import { useEffect } from 'react';
 import { Hand } from './features/hand/hand';
 import { Realm } from './features/realm/realm';
+import { PromptModal } from './features/prompt/prompt-modal';
+import { usePromptsStore } from './stores/prompts.store';
 
 export function App() {
+  const showPrompt = usePromptsStore((s) => s.showPrompt);
+
+  useEffect(() => {
+    showPrompt({ id: 'p1', message: 'Sample prompt' });
+  }, [showPrompt]);
+
   return (
     <main className="p-4">
       <h1 className="text-2xl font-bold">Villainous</h1>
@@ -43,6 +52,7 @@ export function App() {
         ]}
       />
       <Hand cards={['Card A', 'Card B', 'Card C']} />
+      <PromptModal />
     </main>
   );
 }
