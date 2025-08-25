@@ -22,8 +22,8 @@
   - [ ] Build UI
     - [x] Villain realms
     - [x] Action spots
-    - [x] Hand view
-    - [x] Prompt modals
-  - [ ] Error handling
+  - [x] Hand view
+  - [x] Prompt modals
+  - [x] Error handling
 - [ ] Tests & CI
 - [ ] Docs & acceptance
