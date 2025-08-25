@@ -6,4 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../../packages/model/Model.csproj" />
+  </ItemGroup>
+
 </Project>
