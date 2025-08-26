@@ -75,10 +75,10 @@
   _Acceptance Criteria_: client retries and rejoins matches automatically.
 
 ## Observability
-- [ ] 🕓 Configure Serilog with console, file, and Seq sinks
+- [x] ✅ Configure Serilog with console, file, and Seq sinks
   _Rationale_: collect structured logs
   _Acceptance Criteria_: appsettings configure all sinks.
-- [ ] 🕓 Enable OpenTelemetry tracing and metrics exporters
+- [x] ✅ Enable OpenTelemetry tracing and metrics exporters
   _Rationale_: support tracing backends
   _Acceptance Criteria_: OTEL configured with Otlp exporter.
 - [ ] ⛔ Propagate `traceId` into logs and ProblemDetails
