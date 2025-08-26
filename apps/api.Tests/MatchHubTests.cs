@@ -74,10 +74,52 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         var problem = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
         Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
         Assert.Equal("Unknown command type", problem.Title);
+        Assert.Equal("command.unknown_type", problem.Extensions["code"]?.ToString());
+        Assert.False(string.IsNullOrEmpty(problem.Extensions["traceId"]?.ToString()));
     }
 
-    private HubConnection BuildConnection() => new HubConnectionBuilder()
-        .WithUrl($"{factory.Server.BaseAddress}hub/match", options =>
+    [Fact]
+    public async Task JoinMatchRejectsUnknownId()
+    {
+        await using var connection = BuildConnection();
+        await connection.StartAsync();
+
+        var tcs = new TaskCompletionSource<ProblemDetails>();
+        connection.On<ProblemDetails>("CommandRejected", p => tcs.TrySetResult(p));
+
+        await connection.InvokeAsync("JoinMatch", Guid.NewGuid());
+
+        var problem = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
+        Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
+        Assert.Equal("match.not_found", problem.Extensions["code"]?.ToString());
+        Assert.False(string.IsNullOrEmpty(problem.Extensions["traceId"]?.ToString()));
+    }
+
+    [Fact]
+    public async Task ReconnectsUsingQueryString()
+    {
+        var client = factory.CreateClient();
+        var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
+        var matchId = (await create.Content.ReadFromJsonAsync<CreateMatchResponse>())!.MatchId;
+
+        async Task<GameState> ConnectAsync()
+        {
+            await using var connection = BuildConnection(matchId);
+            var tcs = new TaskCompletionSource<GameState>();
+            connection.On<GameState>("State", s => tcs.TrySetResult(s));
+            await connection.StartAsync();
+            return await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
+        }
+
+        var first = await ConnectAsync();
+        Assert.Equal(matchId, first.MatchId);
+
+        var second = await ConnectAsync();
+        Assert.Equal(matchId, second.MatchId);
+    }
+
+    private HubConnection BuildConnection(Guid? matchId = null) => new HubConnectionBuilder()
+        .WithUrl(matchId is Guid id ? $"{factory.Server.BaseAddress}hub/match?matchId={id}" : $"{factory.Server.BaseAddress}hub/match", options =>
         {
             options.HttpMessageHandlerFactory = _ => factory.Server.CreateHandler();
         })

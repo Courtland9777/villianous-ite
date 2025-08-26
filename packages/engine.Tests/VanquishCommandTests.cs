@@ -11,7 +11,7 @@ public class VanquishCommandTests
         var allies = new[] { new Ally("Ally1", 2), new Ally("Ally2", 2) };
         var location = new LocationState("Realm", new[] { hero }, allies);
         var player = new PlayerState(Guid.NewGuid(), "Villain", 0, new[] { location });
-        var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0);
+        var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0, new Random(0));
 
         var command = new VanquishCommand(player.Id, "Realm", "Hero");
         var events = command.Execute(state);

@@ -9,7 +9,7 @@ public class CheckObjectiveCommandTests
     {
         var jail = new LocationState("The Jail", new[] { new Hero("Robin Hood", 0) }, Array.Empty<Ally>());
         var player = new PlayerState(Guid.NewGuid(), "Prince John", 20, new[] { jail });
-        var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0);
+        var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0, new Random(0));
 
         var command = new CheckObjectiveCommand(player.Id);
         var events = command.Execute(state);
@@ -22,7 +22,7 @@ public class CheckObjectiveCommandTests
     {
         var jail = new LocationState("The Jail", Array.Empty<Hero>(), Array.Empty<Ally>());
         var player = new PlayerState(Guid.NewGuid(), "Prince John", 19, new[] { jail });
-        var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0);
+        var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0, new Random(0));
 
         var command = new CheckObjectiveCommand(player.Id);
         var events = command.Execute(state);
