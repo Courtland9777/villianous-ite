@@ -64,7 +64,7 @@
 - [x] ✅ Build core UI (realms, action spots, hand view, prompt modals)
   _Rationale_: allow players to take actions
   _Acceptance Criteria_: components render and respond to state.
-- [ ] 🕓 Handle REST/SignalR errors with ProblemDetails and traceId display
+- [x] ✅ Handle REST/SignalR errors with ProblemDetails and traceId display
   _Rationale_: help users report issues
   _Acceptance Criteria_: error boundary shows title, code, and traceId.
 - [ ] ⛔ Add accessibility basics (focus traps, ARIA roles, keyboard nav)
