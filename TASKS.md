@@ -41,10 +41,10 @@
 - [x] ✅ Expand SignalR hub with reconnect handling and group broadcasts
   _Rationale_: keep clients in sync during disconnects
   _Acceptance Criteria_: tests cover reconnect and broadcast semantics.
-- [ ] ⛔ Return ProblemDetails with `code` and `traceId` for all REST errors
+- [x] ✅ Return ProblemDetails with `code` and `traceId` for all REST errors
   _Rationale_: standardized error diagnostics
   _Acceptance Criteria_: RFC 9457 responses include `code` & `traceId`.
-- [ ] ⛔ Emit `CommandRejected` with `code` and `traceId` on SignalR errors
+- [x] ✅ Emit `CommandRejected` with `code` and `traceId` on SignalR errors
   _Rationale_: mirror REST error shape
   _Acceptance Criteria_: hub sends structured rejection messages.
 - [ ] ⛔ Redact hidden information from GameState DTOs

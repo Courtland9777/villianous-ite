@@ -44,6 +44,8 @@ public class PostMatchCommandsTests : IClassFixture<WebApplicationFactory<Progra
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.Equal(HttpStatusCode.NotFound, response.StatusCode);
         Assert.Equal("Match not found", problem!.Title);
+        Assert.Equal("match.not_found", problem.Extensions["code"]?.ToString());
+        Assert.False(string.IsNullOrEmpty(problem.Extensions["traceId"]?.ToString()));
     }
 
     [Fact]
@@ -56,5 +58,7 @@ public class PostMatchCommandsTests : IClassFixture<WebApplicationFactory<Progra
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.Equal(HttpStatusCode.BadRequest, response.StatusCode);
         Assert.Equal("Unknown command type", problem!.Title);
+        Assert.Equal("command.unknown_type", problem.Extensions["code"]?.ToString());
+        Assert.False(string.IsNullOrEmpty(problem.Extensions["traceId"]?.ToString()));
     }
 }

@@ -38,12 +38,8 @@ public class MatchHub : Hub
     {
         if (!matches.TryGetValue(matchId, out var state))
         {
-            await Clients.Caller.SendAsync("CommandRejected", new ProblemDetails
-            {
-                Title = "Match not found",
-                Status = StatusCodes.Status404NotFound,
-                Type = "match.not_found"
-            });
+            var ctx = Context.GetHttpContext()!;
+            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
             return;
         }
 
@@ -55,12 +51,8 @@ public class MatchHub : Hub
     {
         if (!matches.TryGetValue(matchId, out var state))
         {
-            await Clients.Caller.SendAsync("CommandRejected", new ProblemDetails
-            {
-                Title = "Match not found",
-                Status = StatusCodes.Status404NotFound,
-                Type = "match.not_found"
-            });
+            var ctx = Context.GetHttpContext()!;
+            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
             return;
         }
 
@@ -76,12 +68,8 @@ public class MatchHub : Hub
 
         if (command is null)
         {
-            await Clients.Caller.SendAsync("CommandRejected", new ProblemDetails
-            {
-                Title = "Unknown command type",
-                Status = StatusCodes.Status400BadRequest,
-                Type = "rules.illegal_action"
-            });
+            var ctx = Context.GetHttpContext()!;
+            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status400BadRequest, "command.unknown_type", "Unknown command type"));
             return;
         }
 

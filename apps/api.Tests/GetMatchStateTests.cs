@@ -38,5 +38,7 @@ public class GetMatchStateTests : IClassFixture<WebApplicationFactory<Program>>
         var problem = await response.Content.ReadFromJsonAsync<ProblemDetails>();
         Assert.Equal(System.Net.HttpStatusCode.NotFound, response.StatusCode);
         Assert.Equal("Match not found", problem!.Title);
+        Assert.Equal("match.not_found", problem.Extensions["code"]?.ToString());
+        Assert.False(string.IsNullOrEmpty(problem.Extensions["traceId"]?.ToString()));
     }
 }

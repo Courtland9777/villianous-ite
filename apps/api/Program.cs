@@ -54,21 +54,21 @@ app.MapPost("/api/matches", (CreateMatchRequest request) =>
     return Results.Json(new CreateMatchResponse(matchId), statusCode: StatusCodes.Status201Created);
 });
 
-app.MapGet("/api/matches/{id:guid}/state", (Guid id) =>
+app.MapGet("/api/matches/{id:guid}/state", (HttpContext ctx, Guid id) =>
     matches.TryGetValue(id, out var state)
         ? Results.Json(state)
-        : Results.Problem(title: "Match not found", statusCode: StatusCodes.Status404NotFound, type: "match.not_found"));
+        : ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
 
-app.MapGet("/api/matches/{id:guid}/replay", (Guid id) =>
+app.MapGet("/api/matches/{id:guid}/replay", (HttpContext ctx, Guid id) =>
     replays.TryGetValue(id, out var events)
         ? Results.Json(events)
-        : Results.Problem(title: "Match not found", statusCode: StatusCodes.Status404NotFound, type: "match.not_found"));
+        : ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
 
-app.MapPost("/api/matches/{id:guid}/commands", (Guid id, SubmitCommandRequest request) =>
+app.MapPost("/api/matches/{id:guid}/commands", (HttpContext ctx, Guid id, SubmitCommandRequest request) =>
 {
     if (!matches.TryGetValue(id, out var state))
     {
-        return Results.Problem(title: "Match not found", statusCode: StatusCodes.Status404NotFound, type: "match.not_found");
+        return ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found");
     }
 
     ICommand? command = request.Type switch
@@ -83,7 +83,7 @@ app.MapPost("/api/matches/{id:guid}/commands", (Guid id, SubmitCommandRequest re
 
     if (command is null)
     {
-        return Results.Problem(title: "Unknown command type", statusCode: StatusCodes.Status400BadRequest, type: "rules.illegal_action");
+        return ProblemFactory.Create(ctx, StatusCodes.Status400BadRequest, "command.unknown_type", "Unknown command type");
     }
 
     var (newState, events) = GameReducer.Reduce(state, command);

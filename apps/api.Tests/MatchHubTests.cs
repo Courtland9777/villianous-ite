@@ -74,6 +74,25 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         var problem = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
         Assert.Equal(StatusCodes.Status400BadRequest, problem.Status);
         Assert.Equal("Unknown command type", problem.Title);
+        Assert.Equal("command.unknown_type", problem.Extensions["code"]?.ToString());
+        Assert.False(string.IsNullOrEmpty(problem.Extensions["traceId"]?.ToString()));
+    }
+
+    [Fact]
+    public async Task JoinMatchRejectsUnknownId()
+    {
+        await using var connection = BuildConnection();
+        await connection.StartAsync();
+
+        var tcs = new TaskCompletionSource<ProblemDetails>();
+        connection.On<ProblemDetails>("CommandRejected", p => tcs.TrySetResult(p));
+
+        await connection.InvokeAsync("JoinMatch", Guid.NewGuid());
+
+        var problem = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
+        Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
+        Assert.Equal("match.not_found", problem.Extensions["code"]?.ToString());
+        Assert.False(string.IsNullOrEmpty(problem.Extensions["traceId"]?.ToString()));
     }
 
     [Fact]
