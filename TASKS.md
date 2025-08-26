@@ -30,7 +30,7 @@
 - [x] ✅ Enforce deterministic engine with seeded RNG and replay parity tests
   _Rationale_: allow reproducible matches
   _Acceptance Criteria_: RNG injectable; replay tests confirm identical state for same seed+commands.
-- [ ] ⛔ Guard state invariants (deck counts, non‑negative power, no dangling refs)
+- [x] ✅ Guard state invariants (deck counts, non‑negative power, no dangling refs)
   _Rationale_: prevent illegal game states
   _Acceptance Criteria_: invariant checks with failing tests on violation.
 
@@ -38,7 +38,7 @@
 - [x] ✅ Expose REST endpoints for matches (create, state, replay, commands)
   _Rationale_: serve game state over HTTP
   _Acceptance Criteria_: endpoints respond per `API_CONTRACT.md`.
-- [ ] 🕓 Expand SignalR hub with reconnect handling and group broadcasts
+- [x] ✅ Expand SignalR hub with reconnect handling and group broadcasts
   _Rationale_: keep clients in sync during disconnects
   _Acceptance Criteria_: tests cover reconnect and broadcast semantics.
 - [ ] ⛔ Return ProblemDetails with `code` and `traceId` for all REST errors

@@ -7,7 +7,9 @@ public static class GameReducer
         ArgumentNullException.ThrowIfNull(state);
         ArgumentNullException.ThrowIfNull(command);
 
+        StateInvariants.Validate(state);
         var events = command.Execute(state);
+        StateInvariants.Validate(state);
         return (state, events);
     }
 }
