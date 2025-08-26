@@ -9,7 +9,7 @@ public class FateCommandTests
     {
         var player1 = new PlayerState(Guid.NewGuid(), "Villain1", 0, Array.Empty<LocationState>());
         var player2 = new PlayerState(Guid.NewGuid(), "Villain2", 0, Array.Empty<LocationState>());
-        var state = new GameState(Guid.NewGuid(), new[] { player1, player2 }, 0, 0);
+        var state = new GameState(Guid.NewGuid(), new[] { player1, player2 }, 0, 0, new Random(0));
 
         var command = new FateCommand(player1.Id, player2.Id, "Hero");
         var events = command.Execute(state);
@@ -21,7 +21,7 @@ public class FateCommandTests
     public void Does_Not_Emit_When_Targeting_Self()
     {
         var player = new PlayerState(Guid.NewGuid(), "Villain", 0, Array.Empty<LocationState>());
-        var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0);
+        var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0, new Random(0));
 
         var command = new FateCommand(player.Id, player.Id, "Hero");
         var events = command.Execute(state);

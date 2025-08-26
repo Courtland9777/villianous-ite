@@ -48,7 +48,7 @@ app.MapPost("/api/matches", (CreateMatchRequest request) =>
     var players = request.Villains
         .Select(v => new PlayerState(Guid.NewGuid(), v, 0, Array.Empty<LocationState>()))
         .ToList();
-    var state = new GameState(matchId, players, 0, 0);
+    var state = new GameState(matchId, players, 0, 0, new Random(0));
     matches[matchId] = state;
     replays[matchId] = new List<DomainEvent>();
     return Results.Json(new CreateMatchResponse(matchId), statusCode: StatusCodes.Status201Created);
