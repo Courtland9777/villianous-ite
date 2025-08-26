@@ -10,8 +10,8 @@
 - [x] ✅ Keep PolyForm Noncommercial license file  
   _Rationale_: honor licensing terms  
   _Acceptance Criteria_: `LICENSE` present.
-- [ ] ⛔ Add Directory.Packages.props for NuGet version pinning  
-  _Rationale_: ensure reproducible builds  
+- [x] ✅ Add Directory.Packages.props for NuGet version pinning
+  _Rationale_: ensure reproducible builds
   _Acceptance Criteria_: centralized props file pins all package versions.
 - [ ] ⛔ Pin web `package.json` dependency versions  
   _Rationale_: avoid unintended upgrades  
