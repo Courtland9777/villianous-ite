@@ -13,8 +13,8 @@
 - [x] ✅ Add Directory.Packages.props for NuGet version pinning
   _Rationale_: ensure reproducible builds
   _Acceptance Criteria_: centralized props file pins all package versions.
-- [ ] ⛔ Pin web `package.json` dependency versions  
-  _Rationale_: avoid unintended upgrades  
+- [x] ✅ Pin web `package.json` dependency versions
+  _Rationale_: avoid unintended upgrades
   _Acceptance Criteria_: remove range specifiers (`^`, `~`) in `apps/web/package.json`.
 
 ## Engine
