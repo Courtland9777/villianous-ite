@@ -13,4 +13,8 @@
     <None Include="../../LICENSE" Pack="true" PackagePath="" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="../engine/Engine.csproj" />
+  </ItemGroup>
+
 </Project>

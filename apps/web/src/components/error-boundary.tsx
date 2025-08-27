@@ -23,6 +23,7 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div role="alert" className="bg-red-100 text-red-800 p-4">
           <p>{problem?.title ?? error.message}</p>
+          {problem?.code && <p className="text-xs">Code: {problem.code}</p>}
           {problem?.traceId && (
             <p className="text-xs">Trace ID: {problem.traceId}</p>
           )}

@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Serilog.Context;
 using Villainous.Engine;
 using Villainous.Model;
 
@@ -11,13 +12,16 @@ public class MatchHub : Hub
 {
     private readonly ConcurrentDictionary<Guid, GameState> matches;
     private readonly ConcurrentDictionary<Guid, List<DomainEvent>> replays;
+    private readonly ConcurrentDictionary<(Guid, Guid, int), bool> processed;
 
     public MatchHub(
         ConcurrentDictionary<Guid, GameState> matches,
-        ConcurrentDictionary<Guid, List<DomainEvent>> replays)
+        ConcurrentDictionary<Guid, List<DomainEvent>> replays,
+        ConcurrentDictionary<(Guid, Guid, int), bool> processed)
     {
         this.matches = matches;
         this.replays = replays;
+        this.processed = processed;
     }
 
     public override async Task OnConnectedAsync()
@@ -28,7 +32,7 @@ public class MatchHub : Hub
             matches.TryGetValue(matchId, out var state))
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, matchId.ToString());
-            await Clients.Caller.SendAsync("State", state);
+            await Clients.Caller.SendAsync("State", state.ToDto());
         }
 
         await base.OnConnectedAsync();
@@ -36,6 +40,7 @@ public class MatchHub : Hub
 
     public async Task JoinMatch(Guid matchId)
     {
+        using var _ = LogContext.PushProperty("MatchId", matchId);
         if (!matches.TryGetValue(matchId, out var state))
         {
             var ctx = Context.GetHttpContext()!;
@@ -44,11 +49,14 @@ public class MatchHub : Hub
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, matchId.ToString());
-        await Clients.Caller.SendAsync("State", state);
+        await Clients.Caller.SendAsync("State", state.ToDto());
     }
 
     public async Task SendCommand(Guid matchId, SubmitCommandRequest request)
     {
+        using var matchLog = LogContext.PushProperty("MatchId", matchId);
+        using var playerLog = LogContext.PushProperty("PlayerId", request.PlayerId);
+
         if (!matches.TryGetValue(matchId, out var state))
         {
             var ctx = Context.GetHttpContext()!;
@@ -73,9 +81,17 @@ public class MatchHub : Hub
             return;
         }
 
+        var key = (matchId, request.PlayerId, request.ClientSeq);
+        if (!processed.TryAdd(key, true))
+        {
+            var ctx = Context.GetHttpContext()!;
+            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status409Conflict, "command.duplicate", "Duplicate command"));
+            return;
+        }
+
         var (newState, events) = GameReducer.Reduce(state, command);
         matches[matchId] = newState;
         replays[matchId].AddRange(events);
-        await Clients.Group(matchId.ToString()).SendAsync("State", newState);
+        await Clients.Group(matchId.ToString()).SendAsync("State", newState.ToDto());
     }
 }
