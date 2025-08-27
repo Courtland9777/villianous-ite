@@ -12,9 +12,16 @@ describe('PromptModal', () => {
     usePromptsStore.getState().showPrompt({ id: '1', message: 'Hello there' });
     render(<PromptModal />);
 
-    expect(screen.getByRole('dialog')).toHaveTextContent('Hello there');
+    const dialog = screen.getByRole('dialog');
+    const button = screen.getByRole('button', { name: /close/i });
 
-    fireEvent.click(screen.getByRole('button', { name: /close/i }));
+    expect(dialog).toHaveTextContent('Hello there');
+    expect(button).toHaveFocus();
+
+    fireEvent.keyDown(dialog, { key: 'Tab' });
+    expect(button).toHaveFocus();
+
+    fireEvent.keyDown(dialog, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).not.toBeInTheDocument();
   });
 });

@@ -4,7 +4,6 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.AspNetCore.SignalR.Client;
-using Villainous.Engine;
 using Villainous.Model;
 using Xunit;
 
@@ -25,7 +24,7 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         var client = factory.CreateClient();
         var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
         var matchId = (await create.Content.ReadFromJsonAsync<CreateMatchResponse>())!.MatchId;
-        var state = await client.GetFromJsonAsync<GameState>($"/api/matches/{matchId}/state");
+        var state = await client.GetFromJsonAsync<GameStateDto>($"/api/matches/{matchId}/state");
         var playerId = state!.Players[0].Id;
 
         await using var connection1 = BuildConnection();
@@ -34,9 +33,9 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         await connection2.StartAsync();
         await connection1.InvokeAsync("JoinMatch", matchId);
 
-        var tcs = new TaskCompletionSource<GameState>();
+        var tcs = new TaskCompletionSource<GameStateDto>();
         var count = 0;
-        connection2.On<GameState>("State", s =>
+        connection2.On<GameStateDto>("State", s =>
         {
             count++;
             if (count == 2)
@@ -46,7 +45,7 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         });
         await connection2.InvokeAsync("JoinMatch", matchId);
 
-        var command = new SubmitCommandRequest("CheckObjective", playerId, null, null, null, null);
+        var command = new SubmitCommandRequest("CheckObjective", playerId, 1, null, null, null, null);
         await connection1.InvokeAsync("SendCommand", matchId, command);
         var updated = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
         Assert.Equal(matchId, updated.MatchId);
@@ -58,7 +57,7 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         var client = factory.CreateClient();
         var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
         var matchId = (await create.Content.ReadFromJsonAsync<CreateMatchResponse>())!.MatchId;
-        var state = await client.GetFromJsonAsync<GameState>($"/api/matches/{matchId}/state");
+        var state = await client.GetFromJsonAsync<GameStateDto>($"/api/matches/{matchId}/state");
         var playerId = state!.Players[0].Id;
 
         await using var connection = BuildConnection();
@@ -68,7 +67,7 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         var tcs = new TaskCompletionSource<ProblemDetails>();
         connection.On<ProblemDetails>("CommandRejected", p => tcs.TrySetResult(p));
 
-        var command = new SubmitCommandRequest("Unknown", playerId, null, null, null, null);
+        var command = new SubmitCommandRequest("Unknown", playerId, 1, null, null, null, null);
         await connection.InvokeAsync("SendCommand", matchId, command);
 
         var problem = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
@@ -102,11 +101,11 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
         var matchId = (await create.Content.ReadFromJsonAsync<CreateMatchResponse>())!.MatchId;
 
-        async Task<GameState> ConnectAsync()
+        async Task<GameStateDto> ConnectAsync()
         {
             await using var connection = BuildConnection(matchId);
-            var tcs = new TaskCompletionSource<GameState>();
-            connection.On<GameState>("State", s => tcs.TrySetResult(s));
+            var tcs = new TaskCompletionSource<GameStateDto>();
+            connection.On<GameStateDto>("State", s => tcs.TrySetResult(s));
             await connection.StartAsync();
             return await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
         }

@@ -47,10 +47,10 @@
 - [x] ✅ Emit `CommandRejected` with `code` and `traceId` on SignalR errors
   _Rationale_: mirror REST error shape
   _Acceptance Criteria_: hub sends structured rejection messages.
-- [ ] ⛔ Redact hidden information from GameState DTOs
+- [x] ✅ Redact hidden information from GameState DTOs
   _Rationale_: prevent opponent info leaks
   _Acceptance Criteria_: opponent hand and fate deck counts only.
-- [ ] ⛔ Support idempotent commands via `{matchId, playerId, clientSeq}`
+- [x] ✅ Support idempotent commands via `{matchId, playerId, clientSeq}`
   _Rationale_: avoid duplicate effects
   _Acceptance Criteria_: duplicate submissions are ignored or rejected.
 - [x] ✅ Provide `/healthz/live` and `/ready` endpoints
@@ -64,10 +64,10 @@
 - [x] ✅ Build core UI (realms, action spots, hand view, prompt modals)
   _Rationale_: allow players to take actions
   _Acceptance Criteria_: components render and respond to state.
-- [ ] 🕓 Handle REST/SignalR errors with ProblemDetails and traceId display
+- [x] ✅ Handle REST/SignalR errors with ProblemDetails and traceId display
   _Rationale_: help users report issues
   _Acceptance Criteria_: error boundary shows title, code, and traceId.
-- [ ] ⛔ Add accessibility basics (focus traps, ARIA roles, keyboard nav)
+- [x] ✅ Add accessibility basics (focus traps, ARIA roles, keyboard nav)
   _Rationale_: usable by keyboard‑only players
   _Acceptance Criteria_: prompts trap focus and provide ARIA labels.
 - [ ] ⛔ Implement SignalR reconnect logic on transient network loss
@@ -75,16 +75,16 @@
   _Acceptance Criteria_: client retries and rejoins matches automatically.
 
 ## Observability
-- [ ] 🕓 Configure Serilog with console, file, and Seq sinks
+- [x] ✅ Configure Serilog with console, file, and Seq sinks
   _Rationale_: collect structured logs
   _Acceptance Criteria_: appsettings configure all sinks.
-- [ ] 🕓 Enable OpenTelemetry tracing and metrics exporters
+- [x] ✅ Enable OpenTelemetry tracing and metrics exporters
   _Rationale_: support tracing backends
   _Acceptance Criteria_: OTEL configured with Otlp exporter.
-- [ ] ⛔ Propagate `traceId` into logs and ProblemDetails
+- [x] ✅ Propagate `traceId` into logs and ProblemDetails
   _Rationale_: correlate errors with traces
   _Acceptance Criteria_: `traceId` present in log context and error payloads.
-- [ ] ⛔ Enrich logs with `matchId` and `playerId`, omitting hidden info
+- [x] ✅ Enrich logs with `matchId` and `playerId`, omitting hidden info
   _Rationale_: maintain observability without leaks
   _Acceptance Criteria_: structured logging tested for redaction.
 

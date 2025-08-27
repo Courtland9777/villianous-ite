@@ -6,6 +6,7 @@ export const problemDetailsSchema = z.object({
   status: z.number().optional(),
   detail: z.string().optional(),
   instance: z.string().optional(),
+  code: z.string().optional(),
   traceId: z.string().optional(),
 });
 
