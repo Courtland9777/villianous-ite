@@ -50,7 +50,7 @@
 - [x] ✅ Redact hidden information from GameState DTOs
   _Rationale_: prevent opponent info leaks
   _Acceptance Criteria_: opponent hand and fate deck counts only.
-- [ ] ⛔ Support idempotent commands via `{matchId, playerId, clientSeq}`
+- [x] ✅ Support idempotent commands via `{matchId, playerId, clientSeq}`
   _Rationale_: avoid duplicate effects
   _Acceptance Criteria_: duplicate submissions are ignored or rejected.
 - [x] ✅ Provide `/healthz/live` and `/ready` endpoints

@@ -11,13 +11,16 @@ public class MatchHub : Hub
 {
     private readonly ConcurrentDictionary<Guid, GameState> matches;
     private readonly ConcurrentDictionary<Guid, List<DomainEvent>> replays;
+    private readonly ConcurrentDictionary<(Guid, Guid, int), bool> processed;
 
     public MatchHub(
         ConcurrentDictionary<Guid, GameState> matches,
-        ConcurrentDictionary<Guid, List<DomainEvent>> replays)
+        ConcurrentDictionary<Guid, List<DomainEvent>> replays,
+        ConcurrentDictionary<(Guid, Guid, int), bool> processed)
     {
         this.matches = matches;
         this.replays = replays;
+        this.processed = processed;
     }
 
     public override async Task OnConnectedAsync()
@@ -70,6 +73,14 @@ public class MatchHub : Hub
         {
             var ctx = Context.GetHttpContext()!;
             await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status400BadRequest, "command.unknown_type", "Unknown command type"));
+            return;
+        }
+
+        var key = (matchId, request.PlayerId, request.ClientSeq);
+        if (!processed.TryAdd(key, true))
+        {
+            var ctx = Context.GetHttpContext()!;
+            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status409Conflict, "command.duplicate", "Duplicate command"));
             return;
         }
 

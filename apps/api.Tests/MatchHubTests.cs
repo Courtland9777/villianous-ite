@@ -45,7 +45,7 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         });
         await connection2.InvokeAsync("JoinMatch", matchId);
 
-        var command = new SubmitCommandRequest("CheckObjective", playerId, null, null, null, null);
+        var command = new SubmitCommandRequest("CheckObjective", playerId, 1, null, null, null, null);
         await connection1.InvokeAsync("SendCommand", matchId, command);
         var updated = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
         Assert.Equal(matchId, updated.MatchId);
@@ -67,7 +67,7 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
         var tcs = new TaskCompletionSource<ProblemDetails>();
         connection.On<ProblemDetails>("CommandRejected", p => tcs.TrySetResult(p));
 
-        var command = new SubmitCommandRequest("Unknown", playerId, null, null, null, null);
+        var command = new SubmitCommandRequest("Unknown", playerId, 1, null, null, null, null);
         await connection.InvokeAsync("SendCommand", matchId, command);
 
         var problem = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));

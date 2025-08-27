@@ -31,6 +31,7 @@ builder.Services.AddOpenTelemetry()
 
 builder.Services.AddSingleton<ConcurrentDictionary<Guid, GameState>>();
 builder.Services.AddSingleton<ConcurrentDictionary<Guid, List<DomainEvent>>>();
+builder.Services.AddSingleton<ConcurrentDictionary<(Guid, Guid, int), bool>>();
 builder.Services.AddSignalR();
 
 var app = builder.Build();
@@ -38,6 +39,7 @@ app.UseSerilogRequestLogging();
 
 var matches = app.Services.GetRequiredService<ConcurrentDictionary<Guid, GameState>>();
 var replays = app.Services.GetRequiredService<ConcurrentDictionary<Guid, List<DomainEvent>>>();
+var processed = app.Services.GetRequiredService<ConcurrentDictionary<(Guid, Guid, int), bool>>();
 
 app.MapHealthChecks("/healthz/live");
 app.MapHealthChecks("/ready");
@@ -84,6 +86,12 @@ app.MapPost("/api/matches/{id:guid}/commands", (HttpContext ctx, Guid id, Submit
     if (command is null)
     {
         return ProblemFactory.Create(ctx, StatusCodes.Status400BadRequest, "command.unknown_type", "Unknown command type");
+    }
+
+    var key = (id, request.PlayerId, request.ClientSeq);
+    if (!processed.TryAdd(key, true))
+    {
+        return ProblemFactory.Create(ctx, StatusCodes.Status409Conflict, "command.duplicate", "Duplicate command");
     }
 
     var (newState, events) = GameReducer.Reduce(state, command);

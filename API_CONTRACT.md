@@ -94,6 +94,7 @@ Request:
 {
   "type": "Fate",
   "playerId": "11111111-1111-1111-1111-111111111111",
+  "clientSeq": 1,
   "targetPlayerId": "22222222-2222-2222-2222-222222222222",
   "card": "ariel"
 }
@@ -107,6 +108,11 @@ Response `200 OK`:
 Error `400 Bad Request` for unknown command types:
 ```json
 { "title": "Unknown command type", "status": 400, "type": "rules.illegal_action" }
+```
+
+Error `409 Conflict` for duplicate `clientSeq` submissions:
+```json
+{ "title": "Duplicate command", "status": 409, "type": "command.duplicate" }
 ```
 
 ---
