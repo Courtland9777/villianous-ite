@@ -68,17 +68,26 @@ app.MapPost("/api/matches", (CreateMatchRequest request) =>
 });
 
 app.MapGet("/api/matches/{id:guid}/state", (HttpContext ctx, Guid id) =>
-    matches.TryGetValue(id, out var state)
+{
+    using var _ = LogContext.PushProperty("MatchId", id);
+    return matches.TryGetValue(id, out var state)
         ? Results.Json(state.ToDto())
-        : ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
+        : ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found");
+});
 
 app.MapGet("/api/matches/{id:guid}/replay", (HttpContext ctx, Guid id) =>
-    replays.TryGetValue(id, out var events)
+{
+    using var _ = LogContext.PushProperty("MatchId", id);
+    return replays.TryGetValue(id, out var events)
         ? Results.Json(events)
-        : ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
+        : ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found");
+});
 
 app.MapPost("/api/matches/{id:guid}/commands", (HttpContext ctx, Guid id, SubmitCommandRequest request) =>
 {
+    using var matchLog = LogContext.PushProperty("MatchId", id);
+    using var playerLog = LogContext.PushProperty("PlayerId", request.PlayerId);
+
     if (!matches.TryGetValue(id, out var state))
     {
         return ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found");
@@ -108,6 +117,7 @@ app.MapPost("/api/matches/{id:guid}/commands", (HttpContext ctx, Guid id, Submit
     var (newState, events) = GameReducer.Reduce(state, command);
     matches[id] = newState;
     replays[id].AddRange(events);
+    Log.Information("Command processed");
     return Results.Json(new SubmitCommandResponse(true));
 });
 

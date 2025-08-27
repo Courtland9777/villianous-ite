@@ -84,7 +84,7 @@
 - [x] ✅ Propagate `traceId` into logs and ProblemDetails
   _Rationale_: correlate errors with traces
   _Acceptance Criteria_: `traceId` present in log context and error payloads.
-- [ ] ⛔ Enrich logs with `matchId` and `playerId`, omitting hidden info
+- [x] ✅ Enrich logs with `matchId` and `playerId`, omitting hidden info
   _Rationale_: maintain observability without leaks
   _Acceptance Criteria_: structured logging tested for redaction.
 

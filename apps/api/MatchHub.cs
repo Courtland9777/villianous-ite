@@ -2,6 +2,7 @@ using System.Collections.Concurrent;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
+using Serilog.Context;
 using Villainous.Engine;
 using Villainous.Model;
 
@@ -39,6 +40,7 @@ public class MatchHub : Hub
 
     public async Task JoinMatch(Guid matchId)
     {
+        using var _ = LogContext.PushProperty("MatchId", matchId);
         if (!matches.TryGetValue(matchId, out var state))
         {
             var ctx = Context.GetHttpContext()!;
@@ -52,6 +54,9 @@ public class MatchHub : Hub
 
     public async Task SendCommand(Guid matchId, SubmitCommandRequest request)
     {
+        using var matchLog = LogContext.PushProperty("MatchId", matchId);
+        using var playerLog = LogContext.PushProperty("PlayerId", request.PlayerId);
+
         if (!matches.TryGetValue(matchId, out var state))
         {
             var ctx = Context.GetHttpContext()!;
