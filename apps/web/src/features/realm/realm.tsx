@@ -1,4 +1,3 @@
-import React from 'react';
 import { ActionSpot } from './action-spot';
 
 interface ActionSpot {
