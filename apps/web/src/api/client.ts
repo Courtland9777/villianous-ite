@@ -1,8 +1,10 @@
 import { problemDetailsSchema, type ProblemDetails } from './problem-details';
 
 export class ApiError extends Error {
-  constructor(public problem: ProblemDetails) {
+  public problem: ProblemDetails;
+  constructor(problem: ProblemDetails) {
     super(problem.title ?? 'Request failed');
+    this.problem = problem;
   }
 }
 
