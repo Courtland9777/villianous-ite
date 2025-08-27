@@ -4,7 +4,6 @@ using System.Net.Http.Json;
 using System.Text.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Villainous.Engine;
 using Villainous.Model;
 using Xunit;
 
@@ -24,7 +23,7 @@ public class PostMatchCommandsTests : IClassFixture<WebApplicationFactory<Progra
     {
         var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
         var match = await create.Content.ReadFromJsonAsync<CreateMatchResponse>();
-        var state = await client.GetFromJsonAsync<GameState>($"/api/matches/{match!.MatchId}/state");
+        var state = await client.GetFromJsonAsync<GameStateDto>($"/api/matches/{match!.MatchId}/state");
         var player = state!.Players[0].Id;
         var target = state.Players[1].Id;
 

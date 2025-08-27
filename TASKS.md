@@ -47,7 +47,7 @@
 - [x] ✅ Emit `CommandRejected` with `code` and `traceId` on SignalR errors
   _Rationale_: mirror REST error shape
   _Acceptance Criteria_: hub sends structured rejection messages.
-- [ ] ⛔ Redact hidden information from GameState DTOs
+- [x] ✅ Redact hidden information from GameState DTOs
   _Rationale_: prevent opponent info leaks
   _Acceptance Criteria_: opponent hand and fate deck counts only.
 - [ ] ⛔ Support idempotent commands via `{matchId, playerId, clientSeq}`

@@ -2,7 +2,6 @@ using System;
 using System.Net.Http.Json;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Testing;
-using Villainous.Engine;
 using Villainous.Model;
 using Xunit;
 
@@ -24,7 +23,7 @@ public class GetMatchStateTests : IClassFixture<WebApplicationFactory<Program>>
         var create = await client.PostAsJsonAsync("/api/matches", request);
         var match = await create.Content.ReadFromJsonAsync<CreateMatchResponse>();
 
-        var state = await client.GetFromJsonAsync<GameState>($"/api/matches/{match!.MatchId}/state");
+        var state = await client.GetFromJsonAsync<GameStateDto>($"/api/matches/{match!.MatchId}/state");
 
         Assert.NotNull(state);
         Assert.Equal(match!.MatchId, state!.MatchId);

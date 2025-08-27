@@ -28,7 +28,7 @@ public class MatchHub : Hub
             matches.TryGetValue(matchId, out var state))
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, matchId.ToString());
-            await Clients.Caller.SendAsync("State", state);
+            await Clients.Caller.SendAsync("State", state.ToDto());
         }
 
         await base.OnConnectedAsync();
@@ -44,7 +44,7 @@ public class MatchHub : Hub
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, matchId.ToString());
-        await Clients.Caller.SendAsync("State", state);
+        await Clients.Caller.SendAsync("State", state.ToDto());
     }
 
     public async Task SendCommand(Guid matchId, SubmitCommandRequest request)
@@ -76,6 +76,6 @@ public class MatchHub : Hub
         var (newState, events) = GameReducer.Reduce(state, command);
         matches[matchId] = newState;
         replays[matchId].AddRange(events);
-        await Clients.Group(matchId.ToString()).SendAsync("State", newState);
+        await Clients.Group(matchId.ToString()).SendAsync("State", newState.ToDto());
     }
 }

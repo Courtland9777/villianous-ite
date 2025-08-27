@@ -56,7 +56,7 @@ app.MapPost("/api/matches", (CreateMatchRequest request) =>
 
 app.MapGet("/api/matches/{id:guid}/state", (HttpContext ctx, Guid id) =>
     matches.TryGetValue(id, out var state)
-        ? Results.Json(state)
+        ? Results.Json(state.ToDto())
         : ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
 
 app.MapGet("/api/matches/{id:guid}/replay", (HttpContext ctx, Guid id) =>
