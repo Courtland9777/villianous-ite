@@ -33,7 +33,8 @@ public class LoggingTests : IClassFixture<LoggingWebApplicationFactory>
         var command = new SubmitCommandRequest("Fate", player, 1, target, null, null, "Ariel");
         await client.PostAsJsonAsync($"/api/matches/{match.MatchId}/commands", command);
 
-        var evt = factory.Sink.Events.FirstOrDefault(e => e.MessageTemplate.Text == "Command processed");
+        var evt = factory.Sink.Events.FirstOrDefault(e =>
+            e.Properties.ContainsKey("MatchId") && e.Properties.ContainsKey("PlayerId"));
         Assert.NotNull(evt);
         Assert.Equal(match.MatchId.ToString(), ((ScalarValue)evt!.Properties["MatchId"]).Value?.ToString());
         Assert.Equal(player.ToString(), ((ScalarValue)evt.Properties["PlayerId"]).Value?.ToString());

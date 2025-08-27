@@ -67,7 +67,7 @@
 - [x] ✅ Handle REST/SignalR errors with ProblemDetails and traceId display
   _Rationale_: help users report issues
   _Acceptance Criteria_: error boundary shows title, code, and traceId.
-- [ ] ⛔ Add accessibility basics (focus traps, ARIA roles, keyboard nav)
+- [x] ✅ Add accessibility basics (focus traps, ARIA roles, keyboard nav)
   _Rationale_: usable by keyboard‑only players
   _Acceptance Criteria_: prompts trap focus and provide ARIA labels.
 - [ ] ⛔ Implement SignalR reconnect logic on transient network loss
