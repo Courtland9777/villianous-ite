@@ -81,7 +81,7 @@
 - [x] ✅ Enable OpenTelemetry tracing and metrics exporters
   _Rationale_: support tracing backends
   _Acceptance Criteria_: OTEL configured with Otlp exporter.
-- [ ] ⛔ Propagate `traceId` into logs and ProblemDetails
+- [x] ✅ Propagate `traceId` into logs and ProblemDetails
   _Rationale_: correlate errors with traces
   _Acceptance Criteria_: `traceId` present in log context and error payloads.
 - [ ] ⛔ Enrich logs with `matchId` and `playerId`, omitting hidden info

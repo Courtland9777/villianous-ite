@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,7 +14,7 @@ public static class ProblemFactory
             Status = statusCode
         };
         problem.Extensions["code"] = code;
-        problem.Extensions["traceId"] = context.TraceIdentifier;
+        problem.Extensions["traceId"] = Activity.Current?.TraceId.ToString() ?? context.TraceIdentifier;
         return problem;
     }
 

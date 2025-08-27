@@ -1,11 +1,13 @@
 using System;
 using System.Collections.Concurrent;
+using System.Diagnostics;
 using System.Linq;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
+using Serilog.Context;
 using Villainous.Engine;
 using Villainous.Model;
 using Villainous.Api;
@@ -36,6 +38,15 @@ builder.Services.AddSignalR();
 
 var app = builder.Build();
 app.UseSerilogRequestLogging();
+
+app.Use(async (ctx, next) =>
+{
+    var traceId = Activity.Current?.TraceId.ToString() ?? ctx.TraceIdentifier;
+    using (LogContext.PushProperty("TraceId", traceId))
+    {
+        await next();
+    }
+});
 
 var matches = app.Services.GetRequiredService<ConcurrentDictionary<Guid, GameState>>();
 var replays = app.Services.GetRequiredService<ConcurrentDictionary<Guid, List<DomainEvent>>>();
