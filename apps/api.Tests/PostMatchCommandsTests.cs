@@ -36,6 +36,32 @@ public class PostMatchCommandsTests : IClassFixture<WebApplicationFactory<Progra
     }
 
     [Fact]
+    public async Task ExecutesCheckObjectiveCommand()
+    {
+        var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
+        var match = await create.Content.ReadFromJsonAsync<CreateMatchResponse>();
+        var state = await client.GetFromJsonAsync<GameStateDto>($"/api/matches/{match!.MatchId}/state");
+        var player = state!.Players[0].Id;
+
+        var command = new SubmitCommandRequest("CheckObjective", player, 1, null, null, null, null);
+        var response = await client.PostAsJsonAsync($"/api/matches/{match.MatchId}/commands", command);
+        response.EnsureSuccessStatusCode();
+    }
+
+    [Fact]
+    public async Task AcceptsVanquishCommand()
+    {
+        var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
+        var match = await create.Content.ReadFromJsonAsync<CreateMatchResponse>();
+        var state = await client.GetFromJsonAsync<GameStateDto>($"/api/matches/{match!.MatchId}/state");
+        var player = state!.Players[0].Id;
+
+        var command = new SubmitCommandRequest("Vanquish", player, 1, null, "Realm", "Hero", null);
+        var response = await client.PostAsJsonAsync($"/api/matches/{match.MatchId}/commands", command);
+        response.EnsureSuccessStatusCode();
+    }
+
+    [Fact]
     public async Task Returns404ForUnknownId()
     {
         var command = new SubmitCommandRequest("CheckObjective", Guid.NewGuid(), 1, null, null, null, null);
