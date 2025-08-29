@@ -1,7 +1,7 @@
 # TASKS
 
 ## Test Status (2025-08-25)
-- Backend line coverage: 72% (`dotnet test --collect:"XPlat Code Coverage"`)
+- Backend line coverage: 86% (`dotnet test --collect:"XPlat Code Coverage"`)
 - Frontend tests: failed – missing @vitest/coverage-v8
 - Lint: passed (`pnpm -C apps/web lint`)
 - Type check: passed (`pnpm -C apps/web exec tsc --noEmit`)
@@ -89,7 +89,7 @@
   _Acceptance Criteria_: structured logging tested for redaction.
 
 ## Testing
-- [ ] ⛔ Achieve backend coverage ≥85% (current 72%)
+- [x] ✅ Achieve backend coverage ≥85% (current 86%)
   _Rationale_: catch regressions early
   _Acceptance Criteria_: coverage reports show ≥85% line coverage.
 - [ ] ⛔ Fix frontend tests and reach coverage ≥80% (missing @vitest/coverage-v8)
