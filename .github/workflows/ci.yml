@@ -26,6 +26,15 @@ jobs:
       - run: dotnet format --verify-no-changes
       - run: dotnet build --no-restore
       - run: dotnet test --no-build --collect:"XPlat Code Coverage"
+      - name: Enforce backend coverage ≥85%
+        run: |
+          COVERAGE=$(grep -oP 'line-rate="\K[0-9.]+' $(find . -path "*/TestResults/*/coverage.cobertura.xml"))
+          echo "Backend coverage: $COVERAGE"
+          awk -v c=$COVERAGE 'BEGIN{ if (c*100 < 85) exit 1 }'
       - run: pnpm --dir apps/web lint
+      - run: pnpm --dir apps/web format:check
       - run: pnpm --dir apps/web test --run --coverage
+      - name: Enforce frontend coverage ≥80%
+        run: |
+          node -e "import fs from 'fs'; const c = JSON.parse(fs.readFileSync('apps/web/coverage/coverage-summary.json')).total.lines.pct; console.log('Frontend coverage:', c); if (c < 80) process.exit(1);"
       - run: pnpm --dir apps/web build

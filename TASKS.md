@@ -106,12 +106,12 @@
 - [x] ✅ Run dotnet build/test and web lint/test in GitHub Actions
   _Rationale_: basic CI automation
   _Acceptance Criteria_: `.github/workflows/ci.yml` executes build and tests.
-- [ ] ⛔ Enforce coverage thresholds and formatting in CI
-  _Rationale_: block low quality changes
-  _Acceptance Criteria_: workflow fails under set thresholds or formatting issues.
-- [ ] ⛔ Add Prettier and `dotnet format` checks to CI
-  _Rationale_: maintain consistent style
-  _Acceptance Criteria_: workflow steps verify formatting.
+ - [x] ✅ Enforce coverage thresholds and formatting in CI
+   _Rationale_: block low quality changes
+   _Acceptance Criteria_: workflow fails under set thresholds or formatting issues.
+ - [x] ✅ Add Prettier and `dotnet format` checks to CI
+   _Rationale_: maintain consistent style
+   _Acceptance Criteria_: workflow steps verify formatting.
 
 ## Docs
 - [ ] ⛔ Update SETUP_GUIDE with verified local ports and observability URLs
