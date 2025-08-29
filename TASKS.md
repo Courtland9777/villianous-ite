@@ -70,7 +70,7 @@
 - [x] ✅ Add accessibility basics (focus traps, ARIA roles, keyboard nav)
   _Rationale_: usable by keyboard‑only players
   _Acceptance Criteria_: prompts trap focus and provide ARIA labels.
-- [ ] ⛔ Implement SignalR reconnect logic on transient network loss
+- [x] ✅ Implement SignalR reconnect logic on transient network loss
   _Rationale_: keep sessions alive
   _Acceptance Criteria_: client retries and rejoins matches automatically.
 

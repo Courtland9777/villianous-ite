@@ -1,6 +1,7 @@
 import { HubConnection, HubConnectionBuilder } from '@microsoft/signalr';
 import { problemDetailsSchema } from './problem-details';
 import { usePromptsStore } from '../stores/prompts.store';
+import { useMatchStore } from '../stores/match.store';
 
 export function createHubConnection(url: string): HubConnection {
   const connection = new HubConnectionBuilder()
@@ -17,6 +18,13 @@ export function createHubConnection(url: string): HubConnection {
     usePromptsStore
       .getState()
       .showPrompt({ id: details.traceId ?? crypto.randomUUID(), message });
+  });
+
+  connection.onreconnected(async () => {
+    const { matchId } = useMatchStore.getState();
+    if (matchId) {
+      await connection.invoke('JoinMatch', matchId);
+    }
   });
 
   return connection;
