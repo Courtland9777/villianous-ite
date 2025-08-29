@@ -1,8 +1,8 @@
 # TASKS
 
 ## Test Status (2025-08-25)
-- Backend line coverage: 72% (`dotnet test --collect:"XPlat Code Coverage"`)
-- Frontend tests: failed – missing @vitest/coverage-v8
+- Backend line coverage: 86% (`dotnet test --collect:"XPlat Code Coverage"`)
+- Frontend line coverage: 91% (`pnpm -C apps/web test --run --coverage`)
 - Lint: passed (`pnpm -C apps/web lint`)
 - Type check: passed (`pnpm -C apps/web exec tsc --noEmit`)
 
@@ -70,7 +70,7 @@
 - [x] ✅ Add accessibility basics (focus traps, ARIA roles, keyboard nav)
   _Rationale_: usable by keyboard‑only players
   _Acceptance Criteria_: prompts trap focus and provide ARIA labels.
-- [ ] ⛔ Implement SignalR reconnect logic on transient network loss
+- [x] ✅ Implement SignalR reconnect logic on transient network loss
   _Rationale_: keep sessions alive
   _Acceptance Criteria_: client retries and rejoins matches automatically.
 
@@ -89,16 +89,16 @@
   _Acceptance Criteria_: structured logging tested for redaction.
 
 ## Testing
-- [ ] ⛔ Achieve backend coverage ≥85% (current 72%)
+- [x] ✅ Achieve backend coverage ≥85% (current 86%)
   _Rationale_: catch regressions early
   _Acceptance Criteria_: coverage reports show ≥85% line coverage.
-- [ ] ⛔ Fix frontend tests and reach coverage ≥80% (missing @vitest/coverage-v8)
+- [x] ✅ Fix frontend tests and reach coverage ≥80%
   _Rationale_: ensure UI reliability
   _Acceptance Criteria_: vitest run succeeds with ≥80% line coverage.
-- [ ] ⛔ Add property and golden fixture tests for engine determinism
+- [x] ✅ Add property and golden fixture tests for engine determinism
   _Rationale_: verify replay parity
   _Acceptance Criteria_: fixture corpus with hash checks committed.
-- [ ] ⛔ Test ProblemDetails mapping and SignalR `CommandRejected` events
+- [x] ✅ Test ProblemDetails mapping and SignalR `CommandRejected` events
   _Rationale_: guarantee error contracts
   _Acceptance Criteria_: integration tests cover error paths.
 
@@ -130,5 +130,4 @@
   _Acceptance Criteria_: model binding rejects invalid payloads.
 
 ## Open Risks / Follow-ups
-- Engine currently lacks deterministic RNG and invariants enforcement.
-- Frontend tests cannot run until coverage plugin is installed.
+- None

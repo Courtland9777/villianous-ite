@@ -78,6 +78,73 @@ public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
     }
 
     [Fact]
+    public async Task SendCommandRejectsDuplicateClientSeq()
+    {
+        var client = factory.CreateClient();
+        var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
+        var matchId = (await create.Content.ReadFromJsonAsync<CreateMatchResponse>())!.MatchId;
+        var state = await client.GetFromJsonAsync<GameStateDto>($"/api/matches/{matchId}/state");
+        var playerId = state!.Players[0].Id;
+        var targetId = state.Players[1].Id;
+
+        await using var connection = BuildConnection();
+        await connection.StartAsync();
+        await connection.InvokeAsync("JoinMatch", matchId);
+
+        var command = new SubmitCommandRequest("Fate", playerId, 1, targetId, null, null, "Ariel");
+        await connection.InvokeAsync("SendCommand", matchId, command);
+
+        var tcs = new TaskCompletionSource<ProblemDetails>();
+        connection.On<ProblemDetails>("CommandRejected", p => tcs.TrySetResult(p));
+
+        await connection.InvokeAsync("SendCommand", matchId, command);
+
+        var problem = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
+        Assert.Equal(StatusCodes.Status409Conflict, problem.Status);
+        Assert.Equal("command.duplicate", problem.Extensions["code"]?.ToString());
+        Assert.False(string.IsNullOrEmpty(problem.Extensions["traceId"]?.ToString()));
+    }
+
+    [Fact]
+    public async Task SendCommandRejectsUnknownMatch()
+    {
+        await using var connection = BuildConnection();
+        await connection.StartAsync();
+
+        var tcs = new TaskCompletionSource<ProblemDetails>();
+        connection.On<ProblemDetails>("CommandRejected", p => tcs.TrySetResult(p));
+
+        var command = new SubmitCommandRequest("CheckObjective", Guid.NewGuid(), 1, null, null, null, null);
+        await connection.InvokeAsync("SendCommand", Guid.NewGuid(), command);
+
+        var problem = await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
+        Assert.Equal(StatusCodes.Status404NotFound, problem.Status);
+        Assert.Equal("match.not_found", problem.Extensions["code"]?.ToString());
+    }
+
+    [Fact]
+    public async Task SendCommandHandlesVanquish()
+    {
+        var client = factory.CreateClient();
+        var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
+        var matchId = (await create.Content.ReadFromJsonAsync<CreateMatchResponse>())!.MatchId;
+        var state = await client.GetFromJsonAsync<GameStateDto>($"/api/matches/{matchId}/state");
+        var playerId = state!.Players[0].Id;
+
+        await using var connection = BuildConnection();
+        await connection.StartAsync();
+        await connection.InvokeAsync("JoinMatch", matchId);
+
+        var tcs = new TaskCompletionSource<GameStateDto>();
+        connection.On<GameStateDto>("State", s => tcs.TrySetResult(s));
+
+        var command = new SubmitCommandRequest("Vanquish", playerId, 1, null, "Realm", "Hero", null);
+        await connection.InvokeAsync("SendCommand", matchId, command);
+
+        await tcs.Task.WaitAsync(TimeSpan.FromSeconds(1));
+    }
+
+    [Fact]
     public async Task JoinMatchRejectsUnknownId()
     {
         await using var connection = BuildConnection();
