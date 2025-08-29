@@ -98,7 +98,7 @@
 - [x] ✅ Add property and golden fixture tests for engine determinism
   _Rationale_: verify replay parity
   _Acceptance Criteria_: fixture corpus with hash checks committed.
-- [ ] ⛔ Test ProblemDetails mapping and SignalR `CommandRejected` events
+- [x] ✅ Test ProblemDetails mapping and SignalR `CommandRejected` events
   _Rationale_: guarantee error contracts
   _Acceptance Criteria_: integration tests cover error paths.
 
