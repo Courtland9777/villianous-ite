@@ -95,7 +95,7 @@
 - [ ] ⛔ Fix frontend tests and reach coverage ≥80% (missing @vitest/coverage-v8)
   _Rationale_: ensure UI reliability
   _Acceptance Criteria_: vitest run succeeds with ≥80% line coverage.
-- [ ] ⛔ Add property and golden fixture tests for engine determinism
+- [x] ✅ Add property and golden fixture tests for engine determinism
   _Rationale_: verify replay parity
   _Acceptance Criteria_: fixture corpus with hash checks committed.
 - [ ] ⛔ Test ProblemDetails mapping and SignalR `CommandRejected` events
@@ -130,5 +130,4 @@
   _Acceptance Criteria_: model binding rejects invalid payloads.
 
 ## Open Risks / Follow-ups
-- Engine currently lacks deterministic RNG and invariants enforcement.
 - Frontend tests cannot run until coverage plugin is installed.
