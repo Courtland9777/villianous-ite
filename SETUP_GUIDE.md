@@ -37,8 +37,8 @@ dotnet restore
 dotnet build
 dotnet run --project apps/api
 ```
-- API starts at `http://localhost:5000`
-- Swagger UI at `http://localhost:5000/swagger`
+- API starts at `http://localhost:5165`
+- Swagger UI at `http://localhost:5165/swagger`
 
 ### Frontend Web
 ```bash

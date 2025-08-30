@@ -48,7 +48,7 @@ public class StateInvariantTests
     [Fact]
     public void Reduce_Throws_When_Location_Null()
     {
-        var player = new PlayerState(Guid.NewGuid(), "Villain", 0, new LocationState?[] { null! });
+        var player = new PlayerState(Guid.NewGuid(), "Villain", 0, new LocationState[] { null! });
         var state = new GameState(Guid.NewGuid(), new[] { player }, 0, 0, new Random(1));
         Assert.Throws<InvalidOperationException>(() => GameReducer.Reduce(state, new RollDieCommand(player.Id)));
     }
