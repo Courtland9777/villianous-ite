@@ -2,6 +2,7 @@ using System;
 using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
+using System.Text.Json;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Metrics;
@@ -48,6 +49,43 @@ if (allowedOrigins is { Length: > 0 })
 }
 
 var app = builder.Build();
+
+app.Use(async (ctx, next) =>
+{
+    IDisposable? matchScope = null;
+    IDisposable? playerScope = null;
+
+    if (ctx.Request.Path.Value is { } path)
+    {
+        var segments = path.Split('/', StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Length >= 3 && segments[0] == "api" && segments[1] == "matches" && Guid.TryParse(segments[2], out var matchId))
+        {
+            matchScope = LogContext.PushProperty("MatchId", matchId);
+
+            if (segments.Length >= 4 && segments[3] == "commands" && string.Equals(ctx.Request.Method, HttpMethods.Post, StringComparison.OrdinalIgnoreCase))
+            {
+                ctx.Request.EnableBuffering();
+                var command = await JsonSerializer.DeserializeAsync<SubmitCommandRequest>(ctx.Request.Body, new JsonSerializerOptions { PropertyNameCaseInsensitive = true }, ctx.RequestAborted);
+                ctx.Request.Body.Position = 0;
+                if (command is not null)
+                {
+                    playerScope = LogContext.PushProperty("PlayerId", command.PlayerId);
+                }
+            }
+        }
+    }
+
+    try
+    {
+        await next();
+    }
+    finally
+    {
+        playerScope?.Dispose();
+        matchScope?.Dispose();
+    }
+});
+
 app.UseSerilogRequestLogging();
 
 if (allowedOrigins is { Length: > 0 })
