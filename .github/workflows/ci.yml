@@ -25,7 +25,7 @@ jobs:
       - run: dotnet restore
       - run: dotnet format --verify-no-changes
       - run: dotnet build --no-restore
-      - run: dotnet test --no-build --collect:"XPlat Code Coverage"
+      - run: dotnet test --no-build -p:CollectCoverage=true -p:CoverletOutputFormat=cobertura -p:Threshold=80 -p:ThresholdType=line -p:ThresholdStat=total
       - run: pnpm --dir apps/web lint
       - run: pnpm --dir apps/web test --run --coverage
       - run: pnpm --dir apps/web build
