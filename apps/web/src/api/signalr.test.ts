@@ -44,7 +44,8 @@ describe('createHubConnection', () => {
   it('rejoins match after reconnect', async () => {
     useMatchStore.getState().setMatchId('match-1');
     createHubConnection('/hub');
-    const handler = (__connection as MockConnection)._reconnected as () => Promise<void>;
+    const handler = (__connection as MockConnection)
+      ._reconnected as () => Promise<void>;
     expect(typeof handler).toBe('function');
     await handler();
     expect(__connection.invoke).toHaveBeenCalledWith('JoinMatch', 'match-1');

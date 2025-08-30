@@ -109,7 +109,7 @@
 - [x] ✅ Enforce coverage thresholds and formatting in CI
   _Rationale_: block low quality changes
   _Acceptance Criteria_: workflow fails under set thresholds or formatting issues.
-- [ ] ⛔ Add Prettier and `dotnet format` checks to CI
+- [x] ✅ Add Prettier and `dotnet format` checks to CI
   _Rationale_: maintain consistent style
   _Acceptance Criteria_: workflow steps verify formatting.
 

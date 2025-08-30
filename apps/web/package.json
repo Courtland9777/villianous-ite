@@ -8,6 +8,7 @@
     "dev": "vite",
     "build": "tsc -b && vite build",
     "lint": "eslint .",
+    "format": "prettier --check .",
     "preview": "vite preview",
     "test": "vitest run --coverage"
   },
@@ -35,6 +36,7 @@
     "globals": "16.3.0",
     "jsdom": "26.1.0",
     "msw": "2.10.5",
+    "prettier": "3.6.2",
     "typescript": "5.8.3",
     "typescript-eslint": "8.39.1",
     "vite": "7.1.2",

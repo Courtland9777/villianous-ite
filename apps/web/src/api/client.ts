@@ -8,7 +8,10 @@ export class ApiError extends Error {
   }
 }
 
-export async function fetchJson<T>(input: RequestInfo, init?: RequestInit): Promise<T> {
+export async function fetchJson<T>(
+  input: RequestInfo,
+  init?: RequestInit,
+): Promise<T> {
   const response = await fetch(input, init);
   if (!response.ok) {
     let problem: ProblemDetails = { status: response.status };
