@@ -2,7 +2,7 @@
 
 ## Test Status (2025-08-25)
 - Backend line coverage: 86% (`dotnet test --collect:"XPlat Code Coverage"`)
-- Frontend tests: failed – missing @vitest/coverage-v8
+- Frontend line coverage: 91% (`pnpm -C apps/web test`)
 - Lint: passed (`pnpm -C apps/web lint`)
 - Type check: passed (`pnpm -C apps/web exec tsc --noEmit`)
 
@@ -130,4 +130,4 @@
   _Acceptance Criteria_: model binding rejects invalid payloads.
 
 ## Open Risks / Follow-ups
-- Frontend tests cannot run until coverage plugin is installed.
+
