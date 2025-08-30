@@ -128,11 +128,17 @@ Error `409 Conflict` for duplicate `clientSeq` submissions:
 ### Events
 - **State**
   ```json
-  { "matchId": "f3b6f28a", "players": [], "currentPlayerIndex": 0, "turn": 0 }
+  {
+    "version": "1.0",
+    "state": { "matchId": "f3b6f28a", "players": [], "currentPlayerIndex": 0, "turn": 0 }
+  }
   ```
 - **CommandRejected**
   ```json
-  { "title": "Unknown command type", "status": 400, "type": "rules.illegal_action" }
+  {
+    "version": "1.0",
+    "problem": { "title": "Unknown command type", "status": 400, "type": "rules.illegal_action" }
+  }
   ```
 
 ---

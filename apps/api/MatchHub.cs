@@ -10,6 +10,8 @@ namespace Villainous.Api;
 
 public class MatchHub : Hub
 {
+    private const string Version = "1.0";
+
     private readonly ConcurrentDictionary<Guid, GameState> matches;
     private readonly ConcurrentDictionary<Guid, List<DomainEvent>> replays;
     private readonly ConcurrentDictionary<(Guid, Guid, int), bool> processed;
@@ -32,7 +34,7 @@ public class MatchHub : Hub
             matches.TryGetValue(matchId, out var state))
         {
             await Groups.AddToGroupAsync(Context.ConnectionId, matchId.ToString());
-            await Clients.Caller.SendAsync("State", state.ToDto());
+            await Clients.Caller.SendAsync("State", new StateMessage(Version, state.ToDto()));
         }
 
         await base.OnConnectedAsync();
@@ -44,12 +46,12 @@ public class MatchHub : Hub
         if (!matches.TryGetValue(matchId, out var state))
         {
             var ctx = Context.GetHttpContext()!;
-            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
+            await Clients.Caller.SendAsync("CommandRejected", new ProblemMessage(Version, ProblemFactory.CreateDetails(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found")));
             return;
         }
 
         await Groups.AddToGroupAsync(Context.ConnectionId, matchId.ToString());
-        await Clients.Caller.SendAsync("State", state.ToDto());
+        await Clients.Caller.SendAsync("State", new StateMessage(Version, state.ToDto()));
     }
 
     public async Task LeaveMatch(Guid matchId)
@@ -58,7 +60,7 @@ public class MatchHub : Hub
         if (!matches.ContainsKey(matchId))
         {
             var ctx = Context.GetHttpContext()!;
-            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
+            await Clients.Caller.SendAsync("CommandRejected", new ProblemMessage(Version, ProblemFactory.CreateDetails(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found")));
             return;
         }
 
@@ -73,7 +75,7 @@ public class MatchHub : Hub
         if (!matches.TryGetValue(matchId, out var state))
         {
             var ctx = Context.GetHttpContext()!;
-            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
+            await Clients.Caller.SendAsync("CommandRejected", new ProblemMessage(Version, ProblemFactory.CreateDetails(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found")));
             return;
         }
 
@@ -90,7 +92,7 @@ public class MatchHub : Hub
         if (command is null)
         {
             var ctx = Context.GetHttpContext()!;
-            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status400BadRequest, "command.unknown_type", "Unknown command type"));
+            await Clients.Caller.SendAsync("CommandRejected", new ProblemMessage(Version, ProblemFactory.CreateDetails(ctx, StatusCodes.Status400BadRequest, "command.unknown_type", "Unknown command type")));
             return;
         }
 
@@ -98,13 +100,16 @@ public class MatchHub : Hub
         if (!processed.TryAdd(key, true))
         {
             var ctx = Context.GetHttpContext()!;
-            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status409Conflict, "command.duplicate", "Duplicate command"));
+            await Clients.Caller.SendAsync("CommandRejected", new ProblemMessage(Version, ProblemFactory.CreateDetails(ctx, StatusCodes.Status409Conflict, "command.duplicate", "Duplicate command")));
             return;
         }
 
         var (newState, events) = GameReducer.Reduce(state, command);
         matches[matchId] = newState;
         replays[matchId].AddRange(events);
-        await Clients.Group(matchId.ToString()).SendAsync("State", newState.ToDto());
+        await Clients.Group(matchId.ToString()).SendAsync("State", new StateMessage(Version, newState.ToDto()));
     }
 }
+
+public record StateMessage(string Version, GameStateDto State);
+public record ProblemMessage(string Version, ProblemDetails Problem);

@@ -62,7 +62,7 @@
 - [x] ✅ Add REST API versioning header
   _Rationale_: support future endpoint versions
   _Acceptance Criteria_: API honors `api-version` header with versioning middleware.
-- [ ] ⛔ Include `version` field in SignalR payloads
+- [x] ✅ Include `version` field in SignalR payloads
   _Rationale_: ensure forward compatibility
   _Acceptance Criteria_: hub emits `version` property and tests assert its presence.
 
@@ -145,6 +145,5 @@
   _Acceptance Criteria_: model binding rejects invalid payloads.
 
 ## Open Risks / Follow-ups
-- SignalR lacks version fields
 - API responses omit `traceId` header and correlation ID
 - CI coverage gates below agreed thresholds
