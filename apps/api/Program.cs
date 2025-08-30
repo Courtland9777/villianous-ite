@@ -36,8 +36,24 @@ builder.Services.AddSingleton<ConcurrentDictionary<Guid, List<DomainEvent>>>();
 builder.Services.AddSingleton<ConcurrentDictionary<(Guid, Guid, int), bool>>();
 builder.Services.AddSignalR();
 
+var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
+if (allowedOrigins is { Length: > 0 })
+{
+    builder.Services.AddCors(options =>
+        options.AddPolicy("frontend", policy => policy
+            .WithOrigins(allowedOrigins)
+            .AllowAnyHeader()
+            .AllowAnyMethod()
+            .AllowCredentials()));
+}
+
 var app = builder.Build();
 app.UseSerilogRequestLogging();
+
+if (allowedOrigins is { Length: > 0 })
+{
+    app.UseCors("frontend");
+}
 
 app.Use(async (ctx, next) =>
 {
