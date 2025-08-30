@@ -37,8 +37,8 @@ dotnet restore
 dotnet build
 dotnet run --project apps/api
 ```
-- API starts at `http://localhost:5000`
-- Swagger UI at `http://localhost:5000/swagger`
+- API starts at `http://localhost:5165` (HTTPS `https://localhost:7010`)
+- Swagger UI at `http://localhost:5165/swagger`
 
 ### Frontend Web
 ```bash
@@ -61,6 +61,7 @@ Access at `http://localhost:5341`.
 ```bash
 docker run -d --name otelcol -p 4317:4317 otel/opentelemetry-collector:latest
 ```
+Endpoint at `http://localhost:4317`.
 
 Configure exporters in `appsettings.json`.
 

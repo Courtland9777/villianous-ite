@@ -114,7 +114,7 @@
    _Acceptance Criteria_: workflow steps verify formatting.
 
 ## Docs
-- [ ] ⛔ Update SETUP_GUIDE with verified local ports and observability URLs
+- [x] ✅ Update SETUP_GUIDE with verified local ports and observability URLs
   _Rationale_: keep onboarding accurate
   _Acceptance Criteria_: guide reflects working defaults.
 
