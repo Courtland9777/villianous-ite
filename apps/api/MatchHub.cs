@@ -52,6 +52,19 @@ public class MatchHub : Hub
         await Clients.Caller.SendAsync("State", state.ToDto());
     }
 
+    public async Task LeaveMatch(Guid matchId)
+    {
+        using var _ = LogContext.PushProperty("MatchId", matchId);
+        if (!matches.ContainsKey(matchId))
+        {
+            var ctx = Context.GetHttpContext()!;
+            await Clients.Caller.SendAsync("CommandRejected", ProblemFactory.CreateDetails(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found"));
+            return;
+        }
+
+        await Groups.RemoveFromGroupAsync(Context.ConnectionId, matchId.ToString());
+    }
+
     public async Task SendCommand(Guid matchId, SubmitCommandRequest request)
     {
         using var matchLog = LogContext.PushProperty("MatchId", matchId);

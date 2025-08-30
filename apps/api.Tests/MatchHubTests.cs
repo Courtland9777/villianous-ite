@@ -184,6 +184,33 @@ public class MatchHubTests : IClassFixture<TestingWebApplicationFactory>
         Assert.Equal(matchId, second.MatchId);
     }
 
+    [Fact]
+    public async Task LeaveMatchStopsStateBroadcast()
+    {
+        var client = factory.CreateClient();
+        var create = await client.PostAsJsonAsync("/api/matches", new CreateMatchRequest(["Prince John", "Captain Hook"]));
+        var matchId = (await create.Content.ReadFromJsonAsync<CreateMatchResponse>())!.MatchId;
+        var state = await client.GetFromJsonAsync<GameStateDto>($"/api/matches/{matchId}/state");
+        var playerId = state!.Players[0].Id;
+
+        await using var connection1 = BuildConnection();
+        await using var connection2 = BuildConnection();
+        await connection1.StartAsync();
+        await connection2.StartAsync();
+        await connection1.InvokeAsync("JoinMatch", matchId);
+        await connection2.InvokeAsync("JoinMatch", matchId);
+        await connection2.InvokeAsync("LeaveMatch", matchId);
+
+        var tcs = new TaskCompletionSource<GameStateDto>();
+        connection2.On<GameStateDto>("State", s => tcs.TrySetResult(s));
+
+        var command = new SubmitCommandRequest("CheckObjective", playerId, 1, null, null, null, null);
+        await connection1.InvokeAsync("SendCommand", matchId, command);
+
+        var completed = await Task.WhenAny(tcs.Task, Task.Delay(TimeSpan.FromMilliseconds(500)));
+        Assert.NotSame(tcs.Task, completed);
+    }
+
     private HubConnection BuildConnection(Guid? matchId = null) => new HubConnectionBuilder()
         .WithUrl(matchId is Guid id ? $"{factory.Server.BaseAddress}hub/match?matchId={id}" : $"{factory.Server.BaseAddress}hub/match", options =>
         {

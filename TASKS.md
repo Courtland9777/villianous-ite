@@ -56,7 +56,7 @@
 - [x] ✅ Provide `/healthz/live` and `/ready` endpoints
   _Rationale_: enable k8s probes
   _Acceptance Criteria_: endpoints return 200 with health checks.
-- [ ] ⛔ Implement `LeaveMatch` in SignalR hub
+- [x] ✅ Implement `LeaveMatch` in SignalR hub
   _Rationale_: allow clients to disconnect gracefully
   _Acceptance Criteria_: hub exposes `LeaveMatch` method and tests cover group removal.
 - [ ] ⛔ Add REST API versioning header
