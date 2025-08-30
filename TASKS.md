@@ -1,8 +1,8 @@
 # TASKS
 
 ## Test Status (2025-08-30)
-- Backend line coverage: 86% (`dotnet test --collect:"XPlat Code Coverage"`)
-- Frontend line coverage: 91% (`pnpm -C apps/web test`)
+- Backend line coverage: 86.6% (`dotnet test --collect:"XPlat Code Coverage"`)
+- Frontend line coverage: 91.3% (`pnpm -C apps/web test -- --coverage`)
 - Lint: passed (`pnpm -C apps/web lint`)
 - Type check: passed (`pnpm -C apps/web exec tsc --noEmit`)
 
@@ -56,6 +56,15 @@
 - [x] ✅ Provide `/healthz/live` and `/ready` endpoints
   _Rationale_: enable k8s probes
   _Acceptance Criteria_: endpoints return 200 with health checks.
+- [ ] ⛔ Implement `LeaveMatch` in SignalR hub
+  _Rationale_: allow clients to disconnect gracefully
+  _Acceptance Criteria_: hub exposes `LeaveMatch` method and tests cover group removal.
+- [ ] ⛔ Add REST API versioning header
+  _Rationale_: support future endpoint versions
+  _Acceptance Criteria_: API honors `api-version` header with versioning middleware.
+- [ ] ⛔ Include `version` field in SignalR payloads
+  _Rationale_: ensure forward compatibility
+  _Acceptance Criteria_: hub emits `version` property and tests assert its presence.
 
 ## Web
 - [x] ✅ Set up routing, stores, data fetching, and SignalR client
@@ -87,12 +96,18 @@
 - [x] ✅ Enrich logs with `matchId` and `playerId`, omitting hidden info
   _Rationale_: maintain observability without leaks
   _Acceptance Criteria_: structured logging tested for redaction.
+- [ ] ⛔ Return `traceId` header on successful responses
+  _Rationale_: help correlate client and server logs
+  _Acceptance Criteria_: all REST replies include `traceId` header with tests.
+- [ ] ⛔ Enrich logs with `correlationId`
+  _Rationale_: track requests end-to-end
+  _Acceptance Criteria_: correlation ID from headers added to log context and propagated.
 
 ## Testing
-- [x] ✅ Achieve backend coverage ≥85% (current 86%)
+- [x] ✅ Achieve backend coverage ≥85% (current 86.6%)
   _Rationale_: catch regressions early
   _Acceptance Criteria_: coverage reports show ≥85% line coverage.
-- [x] ✅ Fix frontend tests and reach coverage ≥80%
+- [x] ✅ Fix frontend tests and reach coverage ≥80% (current 91.3%)
   _Rationale_: ensure UI reliability
   _Acceptance Criteria_: vitest run succeeds with ≥80% line coverage.
 - [x] ✅ Add property and golden fixture tests for engine determinism
@@ -106,9 +121,9 @@
 - [x] ✅ Run dotnet build/test and web lint/test in GitHub Actions
   _Rationale_: basic CI automation
   _Acceptance Criteria_: `.github/workflows/ci.yml` executes build and tests.
-- [x] ✅ Enforce coverage thresholds and formatting in CI
+- [ ] ⛔ Enforce coverage thresholds and formatting in CI
   _Rationale_: block low quality changes
-  _Acceptance Criteria_: workflow fails under set thresholds or formatting issues.
+  _Acceptance Criteria_: workflow fails if backend <85% or frontend <80% coverage or formatting issues.
 - [x] ✅ Add Prettier and `dotnet format` checks to CI
   _Rationale_: maintain consistent style
   _Acceptance Criteria_: workflow steps verify formatting.
@@ -130,4 +145,6 @@
   _Acceptance Criteria_: model binding rejects invalid payloads.
 
 ## Open Risks / Follow-ups
-
+- SignalR lacks `LeaveMatch` and version fields
+- API responses omit `traceId` header and correlation ID
+- CI coverage gates below agreed thresholds
