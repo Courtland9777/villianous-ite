@@ -6,6 +6,8 @@ using System.Text.Json;
 using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Asp.Versioning;
+using Asp.Versioning.Builder;
 using OpenTelemetry.Metrics;
 using OpenTelemetry.Trace;
 using Serilog;
@@ -55,6 +57,14 @@ builder.Services.AddSingleton<ConcurrentDictionary<Guid, GameState>>();
 builder.Services.AddSingleton<ConcurrentDictionary<Guid, List<DomainEvent>>>();
 builder.Services.AddSingleton<ConcurrentDictionary<(Guid, Guid, int), bool>>();
 builder.Services.AddSignalR();
+
+builder.Services.AddApiVersioning(options =>
+{
+    options.DefaultApiVersion = new ApiVersion(1, 0);
+    options.AssumeDefaultVersionWhenUnspecified = true;
+    options.ReportApiVersions = true;
+    options.ApiVersionReader = new HeaderApiVersionReader("api-version");
+});
 
 var allowedOrigins = builder.Configuration.GetSection("Cors:AllowedOrigins").Get<string[]>();
 if (allowedOrigins is { Length: > 0 })
@@ -133,7 +143,15 @@ var processed = app.Services.GetRequiredService<ConcurrentDictionary<(Guid, Guid
 app.MapHealthChecks("/healthz/live");
 app.MapHealthChecks("/ready");
 
-app.MapPost("/api/matches", (HttpContext ctx, CreateMatchRequest request) =>
+var apiVersionSet = app.NewApiVersionSet()
+    .HasApiVersion(new ApiVersion(1, 0))
+    .ReportApiVersions()
+    .Build();
+
+var matchesApi = app.MapGroup("/api/matches")
+    .WithApiVersionSet(apiVersionSet);
+
+matchesApi.MapPost("", (HttpContext ctx, CreateMatchRequest request) =>
 {
     var villains = request.Villains
         .Select(v => v.Trim())
@@ -152,25 +170,25 @@ app.MapPost("/api/matches", (HttpContext ctx, CreateMatchRequest request) =>
     matches[matchId] = state;
     replays[matchId] = new List<DomainEvent>();
     return Results.Json(new CreateMatchResponse(matchId), statusCode: StatusCodes.Status201Created);
-});
+}).MapToApiVersion(new ApiVersion(1, 0));
 
-app.MapGet("/api/matches/{id:guid}/state", (HttpContext ctx, Guid id) =>
+matchesApi.MapGet("{id:guid}/state", (HttpContext ctx, Guid id) =>
 {
     using var _ = LogContext.PushProperty("MatchId", id);
     return matches.TryGetValue(id, out var state)
         ? Results.Json(state.ToDto())
         : ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found");
-});
+}).MapToApiVersion(new ApiVersion(1, 0));
 
-app.MapGet("/api/matches/{id:guid}/replay", (HttpContext ctx, Guid id) =>
+matchesApi.MapGet("{id:guid}/replay", (HttpContext ctx, Guid id) =>
 {
     using var _ = LogContext.PushProperty("MatchId", id);
     return replays.TryGetValue(id, out var events)
         ? Results.Json(events)
         : ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found");
-});
+}).MapToApiVersion(new ApiVersion(1, 0));
 
-app.MapPost("/api/matches/{id:guid}/commands", (HttpContext ctx, Guid id, SubmitCommandRequest request) =>
+matchesApi.MapPost("{id:guid}/commands", (HttpContext ctx, Guid id, SubmitCommandRequest request) =>
 {
     using var matchLog = LogContext.PushProperty("MatchId", id);
     using var playerLog = LogContext.PushProperty("PlayerId", request.PlayerId);
@@ -226,7 +244,7 @@ app.MapPost("/api/matches/{id:guid}/commands", (HttpContext ctx, Guid id, Submit
     replays[id].AddRange(events);
     Log.Information("Command processed");
     return Results.Json(new SubmitCommandResponse(true));
-});
+}).MapToApiVersion(new ApiVersion(1, 0));
 
 app.MapHub<MatchHub>("/hub/match");
 

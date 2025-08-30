@@ -56,13 +56,13 @@
 - [x] ✅ Provide `/healthz/live` and `/ready` endpoints
   _Rationale_: enable k8s probes
   _Acceptance Criteria_: endpoints return 200 with health checks.
-- [ ] ⛔ Implement `LeaveMatch` in SignalR hub
+- [x] ✅ Implement `LeaveMatch` in SignalR hub
   _Rationale_: allow clients to disconnect gracefully
   _Acceptance Criteria_: hub exposes `LeaveMatch` method and tests cover group removal.
-- [ ] ⛔ Add REST API versioning header
+- [x] ✅ Add REST API versioning header
   _Rationale_: support future endpoint versions
   _Acceptance Criteria_: API honors `api-version` header with versioning middleware.
-- [ ] ⛔ Include `version` field in SignalR payloads
+- [x] ✅ Include `version` field in SignalR payloads
   _Rationale_: ensure forward compatibility
   _Acceptance Criteria_: hub emits `version` property and tests assert its presence.
 
@@ -145,6 +145,5 @@
   _Acceptance Criteria_: model binding rejects invalid payloads.
 
 ## Open Risks / Follow-ups
-- SignalR lacks `LeaveMatch` and version fields
 - API responses omit `traceId` header and correlation ID
 - CI coverage gates below agreed thresholds
