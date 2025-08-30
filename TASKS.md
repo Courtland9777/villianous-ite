@@ -119,7 +119,7 @@
   _Acceptance Criteria_: guide reflects working defaults.
 
 ## Security
-- [ ] ⛔ Restrict CORS to allowlisted origins in development
+- [x] ✅ Restrict CORS to allowlisted origins in development
   _Rationale_: prevent unsolicited web access
   _Acceptance Criteria_: CORS policy configured with explicit origins.
 - [ ] ⛔ Add basic rate limiting to API and SignalR
