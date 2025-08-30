@@ -6,11 +6,11 @@ using Xunit;
 
 namespace Villainous.Api.Tests;
 
-public class CreateMatchTests : IClassFixture<WebApplicationFactory<Program>>
+public class CreateMatchTests : IClassFixture<TestingWebApplicationFactory>
 {
     private readonly HttpClient client;
 
-    public CreateMatchTests(WebApplicationFactory<Program> factory)
+    public CreateMatchTests(TestingWebApplicationFactory factory)
     {
         client = factory.CreateClient();
     }

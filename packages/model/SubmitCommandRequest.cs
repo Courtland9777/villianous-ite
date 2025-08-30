@@ -1,9 +1,10 @@
 namespace Villainous.Model;
 
 using System;
+using System.ComponentModel.DataAnnotations;
 
 public record SubmitCommandRequest(
-    string Type,
+    [property: Required, MinLength(1)] string Type,
     Guid PlayerId,
     int ClientSeq,
     Guid? TargetPlayerId,

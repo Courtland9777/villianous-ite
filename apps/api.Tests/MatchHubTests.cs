@@ -9,11 +9,11 @@ using Xunit;
 
 namespace Villainous.Api.Tests;
 
-public class MatchHubTests : IClassFixture<WebApplicationFactory<Program>>
+public class MatchHubTests : IClassFixture<TestingWebApplicationFactory>
 {
-    private readonly WebApplicationFactory<Program> factory;
+    private readonly TestingWebApplicationFactory factory;
 
-    public MatchHubTests(WebApplicationFactory<Program> factory)
+    public MatchHubTests(TestingWebApplicationFactory factory)
     {
         this.factory = factory;
     }

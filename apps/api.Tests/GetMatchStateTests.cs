@@ -7,11 +7,11 @@ using Xunit;
 
 namespace Villainous.Api.Tests;
 
-public class GetMatchStateTests : IClassFixture<WebApplicationFactory<Program>>
+public class GetMatchStateTests : IClassFixture<TestingWebApplicationFactory>
 {
     private readonly HttpClient client;
 
-    public GetMatchStateTests(WebApplicationFactory<Program> factory)
+    public GetMatchStateTests(TestingWebApplicationFactory factory)
     {
         client = factory.CreateClient();
     }

@@ -1,7 +1,6 @@
-using System.Collections.Generic;
+using System.Collections.Concurrent;
 using System.Linq;
 using System.Net.Http.Json;
-using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Hosting;
 using Serilog;
 using Serilog.Core;
@@ -42,7 +41,7 @@ public class LoggingTests : IClassFixture<LoggingWebApplicationFactory>
     }
 }
 
-public class LoggingWebApplicationFactory : WebApplicationFactory<Program>
+public class LoggingWebApplicationFactory : TestingWebApplicationFactory
 {
     public InMemorySink Sink { get; } = new();
 
@@ -58,6 +57,6 @@ public class LoggingWebApplicationFactory : WebApplicationFactory<Program>
 
 public class InMemorySink : ILogEventSink
 {
-    public List<LogEvent> Events { get; } = new();
+    public ConcurrentBag<LogEvent> Events { get; } = new();
     public void Emit(LogEvent logEvent) => Events.Add(logEvent);
 }

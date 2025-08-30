@@ -3,6 +3,7 @@ using System.Collections.Concurrent;
 using System.Diagnostics;
 using System.Linq;
 using System.Text.Json;
+using System.Threading.RateLimiting;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using OpenTelemetry.Metrics;
@@ -20,6 +21,24 @@ builder.Host.UseSerilog((ctx, services, cfg) => cfg
     .Enrich.FromLogContext());
 
 builder.Services.AddHealthChecks();
+
+if (!builder.Environment.IsEnvironment("Testing"))
+{
+    builder.Services.AddRateLimiter(options =>
+    {
+        options.RejectionStatusCode = StatusCodes.Status429TooManyRequests;
+        options.GlobalLimiter = PartitionedRateLimiter.Create<HttpContext, string>(context =>
+            RateLimitPartition.GetFixedWindowLimiter(
+                context.Connection.RemoteIpAddress?.ToString() ?? "unknown",
+                _ => new FixedWindowRateLimiterOptions
+                {
+                    PermitLimit = 5,
+                    Window = TimeSpan.FromMinutes(1),
+                    QueueProcessingOrder = QueueProcessingOrder.OldestFirst,
+                    QueueLimit = 0
+                }));
+    });
+}
 
 builder.Services.AddOpenTelemetry()
     .WithTracing(b => b
@@ -88,6 +107,11 @@ app.Use(async (ctx, next) =>
 
 app.UseSerilogRequestLogging();
 
+if (!app.Environment.IsEnvironment("Testing"))
+{
+    app.UseRateLimiter();
+}
+
 if (allowedOrigins is { Length: > 0 })
 {
     app.UseCors("frontend");
@@ -109,10 +133,19 @@ var processed = app.Services.GetRequiredService<ConcurrentDictionary<(Guid, Guid
 app.MapHealthChecks("/healthz/live");
 app.MapHealthChecks("/ready");
 
-app.MapPost("/api/matches", (CreateMatchRequest request) =>
+app.MapPost("/api/matches", (HttpContext ctx, CreateMatchRequest request) =>
 {
+    var villains = request.Villains
+        .Select(v => v.Trim())
+        .Where(v => !string.IsNullOrWhiteSpace(v))
+        .ToList();
+    if (villains.Count < 2 || villains.Count != request.Villains.Count)
+    {
+        return ProblemFactory.Create(ctx, StatusCodes.Status400BadRequest, "match.invalid_villains", "Invalid villains");
+    }
+
     var matchId = Guid.NewGuid();
-    var players = request.Villains
+    var players = villains
         .Select(v => new PlayerState(Guid.NewGuid(), v, 0, Array.Empty<LocationState>()))
         .ToList();
     var state = new GameState(matchId, players, 0, 0, new Random(0));
@@ -142,17 +175,37 @@ app.MapPost("/api/matches/{id:guid}/commands", (HttpContext ctx, Guid id, Submit
     using var matchLog = LogContext.PushProperty("MatchId", id);
     using var playerLog = LogContext.PushProperty("PlayerId", request.PlayerId);
 
+    var type = request.Type.Trim();
+    var location = request.Location?.Trim();
+    var hero = request.Hero?.Trim();
+    var card = request.Card?.Trim();
+
+    if (string.IsNullOrWhiteSpace(type))
+    {
+        return ProblemFactory.Create(ctx, StatusCodes.Status400BadRequest, "command.invalid_type", "Invalid command type");
+    }
+
+    if (request.PlayerId == Guid.Empty)
+    {
+        return ProblemFactory.Create(ctx, StatusCodes.Status400BadRequest, "command.invalid_player", "Invalid player id");
+    }
+
+    if (request.ClientSeq < 0)
+    {
+        return ProblemFactory.Create(ctx, StatusCodes.Status400BadRequest, "command.invalid_client_seq", "Invalid client sequence");
+    }
+
     if (!matches.TryGetValue(id, out var state))
     {
         return ProblemFactory.Create(ctx, StatusCodes.Status404NotFound, "match.not_found", "Match not found");
     }
 
-    ICommand? command = request.Type switch
+    ICommand? command = type switch
     {
-        "Vanquish" when request.Location is { } location && request.Hero is { } hero
-            => new VanquishCommand(request.PlayerId, location, hero),
-        "Fate" when request.TargetPlayerId is { } target && request.Card is { } card
-            => new FateCommand(request.PlayerId, target, card),
+        "Vanquish" when location is { } l && hero is { } h
+            => new VanquishCommand(request.PlayerId, l, h),
+        "Fate" when request.TargetPlayerId is { } target && target != Guid.Empty && card is { } c
+            => new FateCommand(request.PlayerId, target, c),
         "CheckObjective" => new CheckObjectiveCommand(request.PlayerId),
         _ => null
     };
