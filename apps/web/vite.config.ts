@@ -7,6 +7,23 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: './src/test-setup.ts',
-    coverage: { provider: 'v8' },
+    coverage: {
+      provider: 'v8',
+      include: ['src/**/*'],
+      exclude: [
+        'src/app.tsx',
+        'src/main.tsx',
+        'src/router.tsx',
+        'src/components/**/*',
+        'src/features/realm/**/*',
+        'src/vite-env.d.ts',
+      ],
+      thresholds: {
+        lines: 80,
+        functions: 80,
+        branches: 75,
+        statements: 80,
+      },
+    },
   },
 });

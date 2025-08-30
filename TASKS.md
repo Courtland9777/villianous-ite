@@ -92,7 +92,7 @@
 - [x] ✅ Achieve backend coverage ≥85% (current 86%)
   _Rationale_: catch regressions early
   _Acceptance Criteria_: coverage reports show ≥85% line coverage.
-- [ ] ⛔ Fix frontend tests and reach coverage ≥80% (missing @vitest/coverage-v8)
+- [x] ✅ Fix frontend tests and reach coverage ≥80%
   _Rationale_: ensure UI reliability
   _Acceptance Criteria_: vitest run succeeds with ≥80% line coverage.
 - [x] ✅ Add property and golden fixture tests for engine determinism
