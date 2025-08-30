@@ -1,6 +1,6 @@
 # TASKS
 
-## Test Status (2025-08-25)
+## Test Status (2025-08-30)
 - Backend line coverage: 86% (`dotnet test --collect:"XPlat Code Coverage"`)
 - Frontend line coverage: 91% (`pnpm -C apps/web test`)
 - Lint: passed (`pnpm -C apps/web lint`)
@@ -122,10 +122,10 @@
 - [x] ✅ Restrict CORS to allowlisted origins in development
   _Rationale_: prevent unsolicited web access
   _Acceptance Criteria_: CORS policy configured with explicit origins.
-- [ ] ⛔ Add basic rate limiting to API and SignalR
+ - [x] ✅ Add basic rate limiting to API and SignalR
   _Rationale_: mitigate abusive clients
   _Acceptance Criteria_: exceeding limits returns 429.
-- [ ] ⛔ Validate and sanitize all input DTOs
+ - [x] ✅ Validate and sanitize all input DTOs
   _Rationale_: defend against malformed data
   _Acceptance Criteria_: model binding rejects invalid payloads.
 

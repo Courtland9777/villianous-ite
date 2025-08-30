@@ -9,11 +9,11 @@ using Xunit;
 
 namespace Villainous.Api.Tests;
 
-public class GetMatchReplayTests : IClassFixture<WebApplicationFactory<Program>>
+public class GetMatchReplayTests : IClassFixture<TestingWebApplicationFactory>
 {
     private readonly HttpClient client;
 
-    public GetMatchReplayTests(WebApplicationFactory<Program> factory)
+    public GetMatchReplayTests(TestingWebApplicationFactory factory)
     {
         client = factory.CreateClient();
     }

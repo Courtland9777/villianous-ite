@@ -9,11 +9,11 @@ using Xunit;
 
 namespace Villainous.Api.Tests;
 
-public class PostMatchCommandsTests : IClassFixture<WebApplicationFactory<Program>>
+public class PostMatchCommandsTests : IClassFixture<TestingWebApplicationFactory>
 {
     private readonly HttpClient client;
 
-    public PostMatchCommandsTests(WebApplicationFactory<Program> factory)
+    public PostMatchCommandsTests(TestingWebApplicationFactory factory)
     {
         client = factory.CreateClient();
     }

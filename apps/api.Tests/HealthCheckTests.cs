@@ -5,11 +5,11 @@ using Xunit;
 
 namespace Villainous.Api.Tests;
 
-public class HealthCheckTests : IClassFixture<WebApplicationFactory<Program>>
+public class HealthCheckTests : IClassFixture<TestingWebApplicationFactory>
 {
     private readonly HttpClient client;
 
-    public HealthCheckTests(WebApplicationFactory<Program> factory)
+    public HealthCheckTests(TestingWebApplicationFactory factory)
     {
         client = factory.CreateClient();
     }
